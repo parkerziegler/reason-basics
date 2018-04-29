@@ -1,0 +1,1 @@
+type seattleVariant = Mariners | Sonics | Seahawks | Sounders;

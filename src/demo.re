@@ -170,3 +170,121 @@ let rotate = (x, y) => {
 
 rotate(180, -180);
 rotate(90, -90);
+
+/* Records */
+/* Records are similar to JS objects, but are lighter, immutable by default,
+fixed in field names and types, faster, more rigidly typed. */
+/* Record types are required – the compiler will error if they are not included! */
+/* Prepend the type with mutable to indicate a mutable field. */
+type team = {
+    name: string,
+    mutable rank: int,
+    average: float
+};
+
+let redSox: team = {
+    name: "Red Sox",
+    rank: 1,
+    average: 5.6
+};
+
+/* Record keys are accessed via dot notation */
+print_endline(redSox.name);
+print_endline(string_of_float(redSox.average));
+
+/* New records are created immutably from old records using the spread operator */
+/* However, spread cannot add new fields as records are constrained by type */
+let redSoxUpdate = {
+    ...redSox,
+    average: 6.8
+};
+
+print_endline(string_of_float(redSoxUpdate.average));
+
+/* Existing records can be updated mutably using = */
+redSox.rank = redSox.rank + 1;
+print_endline(string_of_int(redSox.rank));
+
+/* Records also have punning in Reason, similar to ES6 object shorthand syntax. This
+allows you to provide just the key name if the value matches */
+let capital = "Olympia";
+type state = {
+    capital: string,
+    population: int
+};
+
+let washington: state = {
+    capital,
+    population: 6000000
+};
+
+/* You can also pun with types! */
+type place = {
+    state,
+    team: string
+};
+
+let seattle = {
+    state: washington,
+    team: "Mariners"
+};
+
+/* While records are somewhat similar to JS objects, you have to be more cognizant of their types. */
+/* Use records for data that doesn't change shape. Records are compiled to JS arrays with array index
+access, making them blazingly fast. Changing the type of a record can also help flag where you need
+to update your data strucutres, making debugging easier! */
+
+/* Variant */
+/* Variants are a unique data structure in Reason. They allow us to express this or that relationships. */
+type veryCoolVariant = 
+  | Dope /* These are called a variant's constructors or tags */
+  | Sweet
+  | NotBad
+  | AF;
+
+/* Variants are typically moved with Reason's switch statement to pattern match */
+let urStatus = (status) : string =>
+    switch (status) {
+    | Dope => "You are dope!";
+    | Sweet => "You are sweet!";
+    | NotBad => "You are not bad!";
+    | AF => "You are dope af!";
+    };
+
+print_endline(urStatus(AF));
+
+/* Variants need explicit definitions. Import them by calling the module they reside in. */
+let team: Team.seattleVariant = Mariners;
+
+/* Variant constructors can also take arguments. Check out seattleArgVariant in Team.re, which
+has the following shape:
+type seattleArgVariant =
+  | Mariners(player)
+  | Sonics(player, year)
+  | Seahawks
+  | Sounders;
+
+This looks a lot like function arguments! We can use this to our advantage in pattern matching!
+*/
+
+type bostonArgVariant =
+  | RedSox(string)
+  | Celtics(string, int)
+  | Bruins;
+
+let myVar = RedSox("Mookie Betts");
+
+let namePlayer = (teamArg) =>
+    switch (teamArg) {
+    | RedSox(name) => {j|You chose $name|j}
+    | Celtics(name, year) => year < 2008 ? name : "Big 3"
+    | Bruins => "Zdeno Chara"
+    };
+
+print_endline(namePlayer(myVar));
+print_endline(namePlayer(Celtics("Larry Bird", 2009)));
+print_endline(namePlayer(Celtics("Larry Bird", 1984)));
+
+/* The standalone library exposes some cool variants for you. */
+/* type option('a) = None | Some('a); - this allows yo to define types that can be nullable or undefined */
+/* For example -> option(int) types a variable as a nullable integer */
