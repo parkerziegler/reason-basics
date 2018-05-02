@@ -288,3 +288,62 @@ print_endline(namePlayer(Celtics("Larry Bird", 1984)));
 /* The standalone library exposes some cool variants for you. */
 /* type option('a) = None | Some('a); - this allows yo to define types that can be nullable or undefined */
 /* For example -> option(int) types a variable as a nullable integer */
+
+/* List & Array */
+/* Lists are homogenous, immutable, and fast at prepending items. */
+
+/* Lists look a lot like arrays in JS. */
+let fibNum: list(int) = [1, 1, 2, 3, 5, 8, 13, 21];
+
+/* To prepend to a list, use the spread operator. This doesn't mutate the original list.
+fibNumHeadZero shares its elements with fibNum, making it very efficient. */
+let fibNumHeadZero = [0, ...fibNum];
+
+/* It's important to note that using double spread [a, ...b, ...c] is not allowed in Reason. */
+
+/* To access an arbitrary list item use List.nth */
+let myNum = List.nth(fibNum, 4);
+
+/* To get the length of the list use List.length */
+let length: int = List.length(fibNum);
+let lastItem: int = List.nth(fibNum, length - 1);
+
+/* Arrays are like lists, but are mutable and optimized for random access and updates.
+They are fix-sized on native, but flexibly-sized on JS. */
+/* Arrays are denoted with [| and |]. */
+let fibArray: array(int) = [|1, 1, 2, 3, 5, 8, 13, 21|];
+
+/* Array access and update is similar to JS */
+let length: int = Array.length(fibArray);
+let lastItem: int = fibArray[length - 1];
+fibArray[2] = 500;
+
+/* You can also use Array.get and Array.set from the standard library. */
+Array.set(fibArray, 2, 1000);
+Array.get(fibArray, 2);
+
+/* To convert an array to a list use ArrayLabels module. */
+let fibList: list(int) = ArrayLabels.to_list(fibArray);
+let fibBackAsArray: array(int) = ArrayLabels.of_list(fibList);
+
+/* Function */
+/* Functions are declared using => with a return expression. Single line functions can be inline.
+Multiline functions should be surrounded by {} */
+
+/* In Reason, all functions have arguments. If no explicit args are passed, we pass the "()" value,
+which is called "unit" in Reason. */
+let noArg = () : unit => print_endline("This is unit!");
+let add = (x) => x + x;
+let square = (x) => x * x;
+
+/* A preview of the pipe operator! */
+let addAndSquare = (x) => x |> add |> square;
+print_endline(string_of_int(addAndSquare(4)));
+
+/* Reason also has a concept of labeled arguments. Because Reason supports currying, we can use
+labeled arguments to specify args in any order. */
+let stringIntConcat = (~int: int, ~str: string) => string_of_int(int) ++ " " ++ str;
+let res = stringIntConcat(~str="is an int.", ~int=50);
+print_endline(res);
+
+/* You can also alias labeled arguments to use in a function. */
