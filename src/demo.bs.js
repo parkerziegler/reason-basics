@@ -70,6 +70,10 @@ var content = "This tweet has good RT.";
 
 console.log(content);
 
+var greatRT = "Most certainly.";
+
+console.log(greatRT);
+
 console.log("Parker");
 
 var anonymousScope = (console.log("Seattle"), /* () */0);
@@ -397,6 +401,22 @@ function factorialOdd(num) {
 
 console.log(Pervasives.string_of_int(factorialEven(6)));
 
+var ms = "Mariners";
+
+console.log(ms);
+
+var al = "Illinois";
+
+console.log(al);
+
+function destructured(wowZA) {
+  console.log(wowZA[/* exclamation */0]);
+  console.log(wowZA[/* exclamation */0]);
+  return /* () */0;
+}
+
+destructured(/* record */[/* exclamation */"Breathtaking, this Reason!"]);
+
 var x = /* "x" */120;
 
 var y = /* "y" */121;
@@ -429,6 +449,43 @@ var thirdIdx = 44;
 
 var team = /* Mariners */0;
 
+var modalSize = /* tuple */[
+  150,
+  300
+];
+
+var dialogSize = /* tuple */[
+  "500",
+  "1000"
+];
+
+var result = /* Success */Block.__(0, [/* record */[
+      /* data */"Woohoo",
+      /* code */200
+    ]]);
+
+var errResult = /* Failure */Block.__(1, [404]);
+
+var teams = /* tuple */[
+  "Mariners",
+  "Red Sox",
+  "Astros",
+  "Twins"
+];
+
+var bosox = "Red Sox";
+
+var stros = "Astros";
+
+var ts = "Twins";
+
+var myRecord = /* record */[
+  /* album */"Illinois",
+  /* artist */"Sufjan Stevens"
+];
+
+var ar = "Sufjan Stevens";
+
 exports.x                = x;
 exports.y                = y;
 exports.isXY             = isXY;
@@ -445,6 +502,7 @@ exports.sub              = sub;
 exports.displayGreeting  = displayGreeting;
 exports.goodRT           = goodRT;
 exports.content          = content;
+exports.greatRT          = greatRT;
 exports.anonymousScope   = anonymousScope;
 exports.petalLength      = petalLength;
 exports.sepalLength      = sepalLength;
@@ -494,4 +552,17 @@ exports.sayHello         = sayHello$1;
 exports.factorial        = factorial;
 exports.factorialEven    = factorialEven;
 exports.factorialOdd     = factorialOdd;
+exports.modalSize        = modalSize;
+exports.dialogSize       = dialogSize;
+exports.result           = result;
+exports.errResult        = errResult;
+exports.teams            = teams;
+exports.ms               = ms;
+exports.bosox            = bosox;
+exports.stros            = stros;
+exports.ts               = ts;
+exports.myRecord         = myRecord;
+exports.al               = al;
+exports.ar               = ar;
+exports.destructured     = destructured;
 /*  Not a pure module */

@@ -68,15 +68,15 @@ let sub: string = String.sub(greeting, 1, 3);
 print_endline(sub);
 
 /* Conditionals */
-/* Coonditionals work similarly to JavaScript */
+/* Coonditionals work similarly to JavaScript. However, an `if` statement without an `else`
+implictly evaluates to else { () }, the unit type. */
 let displayGreeting = true;
 if (displayGreeting) {
   let message = "Enjoying my ridiculous commentary yet?";
   print_endline(message);
 };
 
-/* Ifs can be written and evaluated inline, and are evaluated to
-their body content – their is no need for a return statement */
+/* Ifs are evaluated to their body content – their is no need for a return statement */
 let goodRT = true;
 let content = if (goodRT) {
     "This tweet has good RT."
@@ -84,6 +84,10 @@ let content = if (goodRT) {
     "This tweet has bad RT."
 };
 print_endline(content);
+
+/* There is also support for the ternary operator. */
+let greatRT = goodRT ? "Most certainly." : "Not so much.";
+print_endline(greatRT);
 
 /* Scoping */
 /* Variables are block-scoped and can be anonymously scoped */
@@ -423,3 +427,71 @@ let rec factorialEven = (num: int) => {
     }
 } and factorialOdd = (num: int) => num * factorialEven(num - 1);
 print_endline(string_of_int(factorialEven(6)));
+
+/* If you're coming from JS, the usefulness of the above pattern comes into play because
+Reason / OCaml does not hoist variable or function declarations! */
+
+/* More on Types */
+/* You can create parameterized types in Reason to make types more expressive. */
+/* They act like functions, accepting parameters and returning types. */
+type measurements('a) = ('a, 'a);
+type measurementsInt = measurements(int);
+type measurementsString = measurements(string);
+
+/* inline */
+let modalSize: measurements(int) = (150, 300);
+let dialogSize: measurements(string) = ("500", "1000");
+
+/* Most of the time, type inference will take care of this for you. */
+/* Types can also make use of variants. */
+type httpResult('a, 'b) =
+  | Success('a)
+  | Failure('b);
+
+type payload = {
+    data: string,
+    code: int
+};
+
+/* The composed type httpResult expects two args, and applies those to Success and Failure constructors. */
+let result: httpResult(payload, int) = Success({ data: "Woohoo", code: 200 });
+let errResult: httpResult(payload, int) = Failure(404);
+
+/* Mutually Recursive Types */
+/* Types, like functions, can be mutually recursive. */
+type professor = {
+    course: list(course)
+} and course = {
+    professor: professor
+};
+
+/* Destructuring */
+/* Destructuring is a common pattern in Reason and is useful for pulling data out of structures. */
+let teams = ("Mariners", "Red Sox", "Astros", "Twins");
+let (ms, bosox, stros, ts) = teams;
+print_endline(ms);
+
+/* You can also alias named fields. */
+type musicRecord = {
+    album: string,
+    artist: string
+};
+
+let myRecord = {
+    album: "Illinois",
+    artist: "Sufjan Stevens"
+};
+let { album: al, artist: ar } = myRecord;
+print_endline(al);
+
+/* You can even destructure and alias function args! */
+type wowza = {
+    exclamation: string
+};
+let destructured = (~wowza as {exclamation} as wowZA) => {
+    /* You have access to both exclamation as the string and
+    wowZA as the original record here. */
+    print_endline(exclamation);
+    print_endline(wowZA.exclamation);
+};
+destructured(~wowza={exclamation: "Breathtaking, this Reason!"});
