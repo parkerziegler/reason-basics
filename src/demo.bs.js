@@ -328,6 +328,75 @@ var res = stringIntConcat(50, "is an int.");
 
 console.log(res);
 
+function calcTriangleArea(b, h) {
+  return 0.5 * b * h;
+}
+
+console.log(Pervasives.string_of_float(0.5 * 2.0 * 7.0));
+
+function multiplyByFive(param) {
+  return Caml_int32.imul(5, param);
+}
+
+var res$1 = multiplyByFive(6);
+
+console.log(Pervasives.string_of_int(res$1));
+
+var multiply = Caml_int32.imul;
+
+function sayHello(g, name, _) {
+  var person = name ? name[0] : "";
+  console.log(g + (" " + person));
+  return /* () */0;
+}
+
+sayHello("Marhaba", /* None */0, /* () */0);
+
+sayHello("Ahlan ya", /* Some */["Parker"], /* () */0);
+
+var actualFunction = sayHello("Marhaba", /* None */0, /* () */0);
+
+function curriedFunction(param, param$1) {
+  return sayHello("Marhaba", param, param$1);
+}
+
+var possibleName = /* Some */["Formidable"];
+
+sayHello("Hi ya", possibleName, /* () */0);
+
+function sayHello$1($staropt$star, name, _) {
+  var greeting = $staropt$star ? $staropt$star[0] : "Aloha";
+  var person = name ? name[0] : "";
+  console.log(greeting + (" " + person));
+  return /* () */0;
+}
+
+sayHello$1(/* None */0, /* None */0, /* () */0);
+
+function factorial(num) {
+  if (num) {
+    return Caml_int32.imul(num, factorial(num - 1 | 0));
+  } else {
+    return 1;
+  }
+}
+
+console.log(Pervasives.string_of_int(factorial(5)));
+
+function factorialEven(num) {
+  if (num) {
+    return Caml_int32.imul(num, factorialOdd(num - 1 | 0));
+  } else {
+    return 1;
+  }
+}
+
+function factorialOdd(num) {
+  return Caml_int32.imul(num, factorialEven(num - 1 | 0));
+}
+
+console.log(Pervasives.string_of_int(factorialEven(6)));
+
 var x = /* "x" */120;
 
 var y = /* "y" */121;
@@ -360,59 +429,69 @@ var thirdIdx = 44;
 
 var team = /* Mariners */0;
 
-exports.x               = x;
-exports.y               = y;
-exports.isXY            = isXY;
-exports.stringFromChar  = stringFromChar;
-exports.greeting        = greeting;
-exports.space           = space;
-exports.name            = name;
-exports.oneSlash        = oneSlash;
-exports.multiLineString = multiLineString;
-exports.unicodeString   = unicodeString;
-exports.style           = style;
-exports.cssStyle        = cssStyle;
-exports.sub             = sub;
-exports.displayGreeting = displayGreeting;
-exports.goodRT          = goodRT;
-exports.content         = content;
-exports.anonymousScope  = anonymousScope;
-exports.petalLength     = petalLength;
-exports.sepalLength     = sepalLength;
-exports.flowerLength    = flowerLength;
-exports.myTuple         = myTuple;
-exports.compareBool     = compareBool;
-exports.aGreatNumber    = aGreatNumber;
-exports.sqaureInt       = sqaureInt;
-exports.aGreatFloat     = aGreatFloat;
-exports.circleArea      = circleArea;
-exports.aDopeTuple      = aDopeTuple;
-exports.twoTuple        = twoTuple;
-exports.first           = first;
-exports.second          = second;
-exports.thirdIdx        = thirdIdx;
-exports.rotate          = rotate;
-exports.redSox          = redSox;
-exports.redSoxUpdate    = redSoxUpdate;
-exports.capital         = capital;
-exports.washington      = washington;
-exports.seattle         = seattle;
-exports.urStatus        = urStatus;
-exports.team            = team;
-exports.myVar           = myVar;
-exports.namePlayer      = namePlayer;
-exports.fibNum          = fibNum;
-exports.fibNumHeadZero  = fibNumHeadZero;
-exports.myNum           = myNum;
-exports.fibArray        = fibArray;
-exports.length          = length$2;
-exports.lastItem        = lastItem;
-exports.fibList         = fibList;
-exports.fibBackAsArray  = fibBackAsArray;
-exports.noArg           = noArg;
-exports.add             = add;
-exports.square          = square;
-exports.addAndSquare    = addAndSquare;
-exports.stringIntConcat = stringIntConcat;
-exports.res             = res;
+exports.x                = x;
+exports.y                = y;
+exports.isXY             = isXY;
+exports.stringFromChar   = stringFromChar;
+exports.greeting         = greeting;
+exports.space            = space;
+exports.name             = name;
+exports.oneSlash         = oneSlash;
+exports.multiLineString  = multiLineString;
+exports.unicodeString    = unicodeString;
+exports.style            = style;
+exports.cssStyle         = cssStyle;
+exports.sub              = sub;
+exports.displayGreeting  = displayGreeting;
+exports.goodRT           = goodRT;
+exports.content          = content;
+exports.anonymousScope   = anonymousScope;
+exports.petalLength      = petalLength;
+exports.sepalLength      = sepalLength;
+exports.flowerLength     = flowerLength;
+exports.myTuple          = myTuple;
+exports.compareBool      = compareBool;
+exports.aGreatNumber     = aGreatNumber;
+exports.sqaureInt        = sqaureInt;
+exports.aGreatFloat      = aGreatFloat;
+exports.circleArea       = circleArea;
+exports.aDopeTuple       = aDopeTuple;
+exports.twoTuple         = twoTuple;
+exports.first            = first;
+exports.second           = second;
+exports.thirdIdx         = thirdIdx;
+exports.rotate           = rotate;
+exports.redSox           = redSox;
+exports.redSoxUpdate     = redSoxUpdate;
+exports.capital          = capital;
+exports.washington       = washington;
+exports.seattle          = seattle;
+exports.urStatus         = urStatus;
+exports.team             = team;
+exports.myVar            = myVar;
+exports.namePlayer       = namePlayer;
+exports.fibNum           = fibNum;
+exports.fibNumHeadZero   = fibNumHeadZero;
+exports.myNum            = myNum;
+exports.fibArray         = fibArray;
+exports.length           = length$2;
+exports.lastItem         = lastItem;
+exports.fibList          = fibList;
+exports.fibBackAsArray   = fibBackAsArray;
+exports.noArg            = noArg;
+exports.add              = add;
+exports.square           = square;
+exports.addAndSquare     = addAndSquare;
+exports.stringIntConcat  = stringIntConcat;
+exports.calcTriangleArea = calcTriangleArea;
+exports.multiplyByFive   = multiplyByFive;
+exports.res              = res$1;
+exports.multiply         = multiply;
+exports.actualFunction   = actualFunction;
+exports.curriedFunction  = curriedFunction;
+exports.possibleName     = possibleName;
+exports.sayHello         = sayHello$1;
+exports.factorial        = factorial;
+exports.factorialEven    = factorialEven;
+exports.factorialOdd     = factorialOdd;
 /*  Not a pure module */

@@ -347,3 +347,79 @@ let res = stringIntConcat(~str="is an int.", ~int=50);
 print_endline(res);
 
 /* You can also alias labeled arguments to use in a function. */
+let calcTriangleArea = (~base as b, ~height as h) => 0.5 *. b *. h;
+print_endline(string_of_float(calcTriangleArea(2.0, 7.0)));
+
+/* Currying */
+/* Reason functions can automatically be partially called. */
+let multiply = (x, y) => x * y;
+let multiplyByFive = multiply(5);
+let res = multiplyByFive(6);
+print_endline(string_of_int(res));
+
+/* is equivalent to */
+let multiply = (x) => (y) => x * y;
+
+/* OCaml optimizes this for us as a way to avoid unnecessary function allocation. */
+
+/* Optional Labeled Arguments */
+/* Labeled args can be made optional in Reason using =? */
+let sayHello = (~greeting as g, ~name=?, ()) => {
+    let person =
+        switch (name) {
+        | None => ""
+        | Some(a) => a
+        };
+    print_endline(g ++ " " ++ person);
+};
+
+sayHello(~greeting="Marhaba", ());
+sayHello(~greeting="Ahlan ya", ~name="Parker", ());
+
+/* Notice the parens () in the function definition and call above. Without it, Reason can't parse the
+function. Both greeting and name can be curried and applied out of order, so it's unclear what 
+something like sayHello(~greeting) would mean. OCaml parses the () as indicating that the optional 
+labeled arg is omitted. Otherwise, it parses the function as the curried function waiting for name
+to be applied. */
+let actualFunction = sayHello(~greeting="Marhaba", ());
+let curriedFunction = sayHello(~greeting="Marhaba");
+
+/* Sometimes, you don't know whether the value you're forwarding to a function is None or Some(val).
+In this case, you can provide an explictly passed optional. */
+let possibleName: option(string) = Some("Formidable");
+sayHello(~greeting="Hi ya", ~name=?possibleName, ());
+
+/* If possibleName had the constructor None, the above function would still work! */
+/* You can also provide default values, like ES6. */
+let sayHello = (~greeting="Aloha", ~name=?, ()) => {
+    let person =
+        switch (name) {
+        | None => ""
+        | Some(a) => a
+        };
+    print_endline(greeting ++ " " ++ person);
+};
+
+sayHello(());
+
+/* Recursive Functions */
+/* To define a recursive function use the "rec" keyword. */
+let rec factorial = (num: int) => {
+    if (num === 0) {
+        1
+    } else {
+        num * factorial(num - 1)
+    }
+};
+print_endline(string_of_int(factorial(5)));
+
+/* Mutually Recursive Functions */
+/* Functions can recursively call each other in Reason. Use the "and" keyword to make this happen. */
+let rec factorialEven = (num: int) => {
+    if (num === 0) {
+        1
+    } else {
+        num * factorialOdd(num - 1)
+    }
+} and factorialOdd = (num: int) => num * factorialEven(num - 1);
+print_endline(string_of_int(factorialEven(6)));
