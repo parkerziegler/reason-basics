@@ -495,3 +495,90 @@ let destructured = (~wowza as {exclamation} as wowZA) => {
     print_endline(wowZA.exclamation);
 };
 destructured(~wowza={exclamation: "Breathtaking, this Reason!"});
+
+/* Pattern Matching */
+type victory = 
+  | NailBiter(int)
+  | BlowOut(int)
+  | OT(string, int);
+
+let myVictory = OT("8:03", 1);
+
+/* Pattern matching allows us to destructure things like variants, handling each case separately.
+The compiler will also let you know of an unhandled case. Try commenting out BlowOut below. */
+let myOTVictory = switch (myVictory) {
+| NailBiter(margin) => "Yeesh, close game. Nice win by " ++ string_of_int(margin) ++ "."
+| BlowOut(margin) => "Damn, what a blowout. " ++ string_of_int(margin) ++ " runs is impressive."
+| OT(time, margin) => "It took you " ++ time ++ " to win by " ++ string_of_int(margin) ++ "."
+};
+
+print_endline(myOTVictory);
+
+/* We can switch on other cases with other data structures as well. */
+let arr = [|500, 600|];
+
+let handleArray = (array: array(int)) => {
+    switch (arr) {
+    | [|500, 601|] => print_endline("This is a very specific case.");
+    | [|_, _|] => print_endline("You have two items in this array.");
+    | _ => print_endline("This is the default.");
+    };
+};
+
+handleArray(arr);
+
+/* You can even pattern match a set of results to a particular outcome. */
+type httpResultWithCode =
+  | Success(int, list(string))
+  | Failure(int);
+
+let handleResult = (res: httpResultWithCode) => {
+    switch (res) {
+    | Success(200, data) => {
+        let f = (acc, el) => acc ++ " " ++ el;
+        let resString = ListLabels.fold_left(~f=f, ~init="", data);
+        print_endline("You've got data." ++ resString ++ ".")
+    };
+    | Failure(500) | Failure(502) => print_endline("Things got messed up :(.");
+    | Failure(404) => print_endline("We couldn't find that, sorry :(.");
+    };
+};
+
+handleResult(Failure(500));
+handleResult(Success(200, ["You", "Rock"]));
+
+/* You can also use when clauses to check specific conditions on a case. */
+/* Expanding on our previous example above: */
+let isServerError = (err) => err === 500;
+
+let handleResult = (res: httpResultWithCode) => {
+    switch (res) {
+    | Success(200, data) => {
+        let f = (acc, el) => acc ++ " " ++ el;
+        let resString = ListLabels.fold_left(~f=f, ~init="", data);
+        print_endline("You've got data." ++ resString ++ ".")
+    };
+    | Failure(errCode) when isServerError(errCode) => print_endline("Things got messed up on the server :(.");
+    | Failure(errCode) => print_endline("Bad gateway. Getaway? Who knows? :(.")
+    | Failure(404) => print_endline("We couldn't find that, sorry :(.");
+    };
+};
+
+handleResult(Failure(500));
+handleResult(Failure(502));
+
+type composer = {
+    name: string,
+    concertos: int
+};
+
+/* You can also nest patterns! */
+let nested = (composer: composer) =>
+    switch (composer) {
+    | {name: "Beethoven" | "Mozart" | "Debussy"} => "Wowza!"
+    | composer when composer.concertos <= 7 => "Boo!"
+    | _ => "Just another composer"
+};
+
+print_endline(nested({name: "Debussy", concertos: 57}));
+print_endline(nested({name: "Jerry", concertos: 7}));
