@@ -582,3 +582,62 @@ let nested = (composer: composer) =>
 
 print_endline(nested({name: "Debussy", concertos: 57}));
 print_endline(nested({name: "Jerry", concertos: 7}));
+
+/* Mutation */
+/* let bindings are, by default, immutable. If you need to mutate a let binding you can use the ref keyword. */
+let mutableVar = ref("mutable");
+
+/* To access it, use the postfix ^ operator. */
+let newMutableVar = mutableVar^;
+
+/* And assignment uses the := operator. */
+mutableVar := "NewMutableVar";
+print_endline(mutableVar^);
+
+/* However, you can also mutate variables simply by shadowing them with another let binding. */
+let shadow = "Shadow Me!";
+print_endline(shadow);
+let shadow = "But now I'm this!";
+print_endline(shadow);
+
+/* Imperative Loops */
+/* For loops in Reason iterate from a start up to and including an end value. */
+let starter = 1;
+let ender = 100;
+
+for (num in starter to ender) {
+    switch (num) {
+    | num when num < 50 => print_endline("You're not yet over the hill.");
+    | num when num >= 50 => print_endline("Yep, you're there.");
+    | _ => print_endline("Don't mind me");
+    };
+};
+
+/* You can use downto to iterate from an end value down to a start value. */
+for (num in ender downto starter) {
+    switch (num) {
+    | num when num < 50 => print_endline("Full on Benjamin Buttoning now!");
+    | num when num >= 50 => print_endline("Starting to Benjamin Button.");
+    | _ => print_endline("Don't mind me");
+    };
+};
+
+/* You can also use while loops in the same manner as you do in JS. */
+let count = ref(1);
+while (count < ref(5)) {
+    print_endline("We are looping!");
+    count := count^ + 1;
+}
+
+/* Use mutable bindings like above to break out of loops. Reason has no concept of a break keyword like JS. */
+
+/* JSX */
+/* Reason natively supports JSX. */
+/* Calls like
+    <div foo={bar}> child1 child2 </div>
+
+become:
+    ([@JSX] div(~foo=bar, ~children=[child1, child2], ()));
+*/
+/* The [@JSX] syntax flags a function as wanting to format as JSX. This allows any library in Reason, not just
+ReasonReact, to take advantage of JSX. */

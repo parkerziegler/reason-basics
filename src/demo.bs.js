@@ -584,6 +584,47 @@ console.log(nested(/* record */[
           /* concertos */7
         ]));
 
+var mutableVar = ["mutable"];
+
+var newMutableVar = mutableVar[0];
+
+mutableVar[0] = "NewMutableVar";
+
+console.log(mutableVar[0]);
+
+console.log("Shadow Me!");
+
+var shadow = "But now I'm this!";
+
+console.log(shadow);
+
+for(var num = 1; num <= 100; ++num){
+  if (num < 50) {
+    console.log("You're not yet over the hill.");
+  } else if (num >= 50) {
+    console.log("Yep, you're there.");
+  } else {
+    console.log("Don't mind me");
+  }
+}
+
+for(var num$1 = 100; num$1 >= 1; --num$1){
+  if (num$1 < 50) {
+    console.log("Full on Benjamin Buttoning now!");
+  } else if (num$1 >= 50) {
+    console.log("Starting to Benjamin Button.");
+  } else {
+    console.log("Don't mind me");
+  }
+}
+
+var count = [1];
+
+while(Caml_obj.caml_lessthan(count, [5])) {
+  console.log("We are looping!");
+  count[0] = count[0] + 1 | 0;
+};
+
 var x = /* "x" */120;
 
 var y = /* "y" */121;
@@ -652,6 +693,10 @@ var myRecord = /* record */[
 ];
 
 var ar = "Sufjan Stevens";
+
+var starter = 1;
+
+var ender = 100;
 
 exports.x                = x;
 exports.y                = y;
@@ -739,4 +784,10 @@ exports.handleArray      = handleArray;
 exports.isServerError    = isServerError;
 exports.handleResult     = handleResult$1;
 exports.nested           = nested;
+exports.mutableVar       = mutableVar;
+exports.newMutableVar    = newMutableVar;
+exports.shadow           = shadow;
+exports.starter          = starter;
+exports.ender            = ender;
+exports.count            = count;
 /*  Not a pure module */
