@@ -3,13 +3,18 @@
 
 var List                    = require("bs-platform/lib/js/list.js");
 var Block                   = require("bs-platform/lib/js/block.js");
+var Curry                   = require("bs-platform/lib/js/curry.js");
 var $$String                = require("bs-platform/lib/js/string.js");
+var FindS                   = require("./findS");
 var Caml_obj                = require("bs-platform/lib/js/caml_obj.js");
 var Caml_array              = require("bs-platform/lib/js/caml_array.js");
 var Caml_int32              = require("bs-platform/lib/js/caml_int32.js");
 var ListLabels              = require("bs-platform/lib/js/listLabels.js");
 var Pervasives              = require("bs-platform/lib/js/pervasives.js");
 var ArrayLabels             = require("bs-platform/lib/js/arrayLabels.js");
+var Caml_oo_curry           = require("bs-platform/lib/js/caml_oo_curry.js");
+var CamlinternalOO          = require("bs-platform/lib/js/camlinternalOO.js");
+var Team$ReasonBasics       = require("./Team.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 console.log("Hello, BuckleScript and Reason! \xe2\x80\x93 Luv BuckleScript");
@@ -625,6 +630,172 @@ while(Caml_obj.caml_lessthan(count, [5])) {
   count[0] = count[0] + 1 | 0;
 };
 
+var twoS = FindS.findS("strings");
+
+Pervasives.print_int(twoS);
+
+var $$class = CamlinternalOO.create_table([
+      "city",
+      "state"
+    ]);
+
+var ids = CamlinternalOO.get_method_labels($$class, [
+      "state",
+      "city"
+    ]);
+
+var state = ids[0];
+
+var city = ids[1];
+
+CamlinternalOO.set_methods($$class, /* array */[
+      city,
+      (function () {
+          return "Burlington";
+        }),
+      state,
+      (function () {
+          return "Vermont";
+        })
+    ]);
+
+CamlinternalOO.init_class($$class);
+
+var anUntypedReasonObject = CamlinternalOO.create_object_opt(0, $$class);
+
+console.log(Caml_oo_curry.js1(-1044368981, 1, anUntypedReasonObject));
+
+var $$class$1 = CamlinternalOO.create_table([
+      "city",
+      "population",
+      "state"
+    ]);
+
+var ids$1 = CamlinternalOO.get_method_labels($$class$1, [
+      "state",
+      "population",
+      "city"
+    ]);
+
+var state$1 = ids$1[0];
+
+var population = ids$1[1];
+
+var city$1 = ids$1[2];
+
+CamlinternalOO.set_methods($$class$1, /* array */[
+      city$1,
+      (function () {
+          return "Burlington";
+        }),
+      state$1,
+      (function () {
+          return "Vermont";
+        }),
+      population,
+      (function () {
+          return 56000;
+        })
+    ]);
+
+CamlinternalOO.init_class($$class$1);
+
+var aTypedReasonObject = CamlinternalOO.create_object_opt(0, $$class$1);
+
+Pervasives.print_int(Caml_oo_curry.js1(-200788083, 2, aTypedReasonObject));
+
+var $$class$2 = CamlinternalOO.create_table(["getPlace"]);
+
+var ids$2 = CamlinternalOO.new_methods_variables($$class$2, [
+      "getPlace",
+      "addOn"
+    ], [
+      "address",
+      "city",
+      "zipCode"
+    ]);
+
+var getPlace = ids$2[0];
+
+var addOn = ids$2[1];
+
+var address = ids$2[2];
+
+var city$2 = ids$2[3];
+
+var zipCode = ids$2[4];
+
+CamlinternalOO.set_methods($$class$2, /* array */[
+      getPlace,
+      (function (self$3, _) {
+          return self$3[address] + (", " + (self$3[city$2] + (" " + (self$3[zipCode] + (". " + Curry._2(self$3[0][addOn], self$3, /* () */0))))));
+        }),
+      addOn,
+      (function (_, _$1) {
+          return "Didn't ya know?";
+        })
+    ]);
+
+function obj_init() {
+  var self = CamlinternalOO.create_object_opt(0, $$class$2);
+  self[address] = "100 Church St";
+  self[city$2] = "Burlington";
+  self[zipCode] = "05712";
+  return self;
+}
+
+CamlinternalOO.init_class($$class$2);
+
+var vt = obj_init(0);
+
+var spot = Caml_oo_curry.js2(610600017, 3, vt, /* () */0);
+
+console.log(spot);
+
+var continents = /* array */[
+  "Africa",
+  "Antarctica",
+  "Asia",
+  "Australia",
+  "Europe",
+  "North America",
+  "South America"
+];
+
+function pickContinent(idx) {
+  return Caml_array.caml_array_get(continents, idx);
+}
+
+var Earth = /* module */[
+  /* continents */continents,
+  /* pickContinent */pickContinent
+];
+
+var aussie = Caml_array.caml_array_get(continents, 3);
+
+console.log(aussie);
+
+console.log(Team$ReasonBasics.Boston[/* team */0]);
+
+var match = Team$ReasonBasics.Boston[/* team */0];
+
+var fact = match === "Red Sox" ? "The Red Sox are DOPE." : "Eh, don't really care.";
+
+console.log(fact);
+
+var team = Team$ReasonBasics.Boston[0];
+
+var basketball = "Celtics";
+
+var ExtendedBoston = /* module */[
+  /* team */team,
+  /* basketball */basketball
+];
+
+console.log(team);
+
+console.log(basketball);
+
 var x = /* "x" */120;
 
 var y = /* "y" */121;
@@ -655,7 +826,7 @@ var twoTuple = /* tuple */[
 
 var thirdIdx = 44;
 
-var team = /* Mariners */0;
+var team$1 = /* Mariners */0;
 
 var modalSize = /* tuple */[
   150,
@@ -698,96 +869,105 @@ var starter = 1;
 
 var ender = 100;
 
-exports.x                = x;
-exports.y                = y;
-exports.isXY             = isXY;
-exports.stringFromChar   = stringFromChar;
-exports.greeting         = greeting;
-exports.space            = space;
-exports.name             = name;
-exports.oneSlash         = oneSlash;
-exports.multiLineString  = multiLineString;
-exports.unicodeString    = unicodeString;
-exports.style            = style;
-exports.cssStyle         = cssStyle;
-exports.sub              = sub;
-exports.displayGreeting  = displayGreeting;
-exports.goodRT           = goodRT;
-exports.content          = content;
-exports.greatRT          = greatRT;
-exports.anonymousScope   = anonymousScope;
-exports.petalLength      = petalLength;
-exports.sepalLength      = sepalLength;
-exports.flowerLength     = flowerLength;
-exports.myTuple          = myTuple;
-exports.compareBool      = compareBool;
-exports.aGreatNumber     = aGreatNumber;
-exports.sqaureInt        = sqaureInt;
-exports.aGreatFloat      = aGreatFloat;
-exports.circleArea       = circleArea;
-exports.aDopeTuple       = aDopeTuple;
-exports.twoTuple         = twoTuple;
-exports.first            = first;
-exports.second           = second;
-exports.thirdIdx         = thirdIdx;
-exports.rotate           = rotate;
-exports.redSox           = redSox;
-exports.redSoxUpdate     = redSoxUpdate;
-exports.capital          = capital;
-exports.washington       = washington;
-exports.seattle          = seattle;
-exports.urStatus         = urStatus;
-exports.team             = team;
-exports.myVar            = myVar;
-exports.namePlayer       = namePlayer;
-exports.fibNum           = fibNum;
-exports.fibNumHeadZero   = fibNumHeadZero;
-exports.myNum            = myNum;
-exports.fibArray         = fibArray;
-exports.length           = length$2;
-exports.lastItem         = lastItem;
-exports.fibList          = fibList;
-exports.fibBackAsArray   = fibBackAsArray;
-exports.noArg            = noArg;
-exports.add              = add;
-exports.square           = square;
-exports.addAndSquare     = addAndSquare;
-exports.stringIntConcat  = stringIntConcat;
-exports.calcTriangleArea = calcTriangleArea;
-exports.multiplyByFive   = multiplyByFive;
-exports.res              = res$1;
-exports.multiply         = multiply;
-exports.actualFunction   = actualFunction;
-exports.curriedFunction  = curriedFunction;
-exports.possibleName     = possibleName;
-exports.sayHello         = sayHello$1;
-exports.factorial        = factorial;
-exports.factorialEven    = factorialEven;
-exports.factorialOdd     = factorialOdd;
-exports.modalSize        = modalSize;
-exports.dialogSize       = dialogSize;
-exports.result           = result;
-exports.errResult        = errResult;
-exports.teams            = teams;
-exports.ms               = ms;
-exports.bosox            = bosox;
-exports.stros            = stros;
-exports.ts               = ts;
-exports.myRecord         = myRecord;
-exports.al               = al;
-exports.ar               = ar;
-exports.destructured     = destructured;
-exports.myVictory        = myVictory;
-exports.myOTVictory      = myOTVictory;
-exports.arr              = arr;
-exports.handleArray      = handleArray;
-exports.isServerError    = isServerError;
-exports.handleResult     = handleResult$1;
-exports.nested           = nested;
-exports.mutableVar       = mutableVar;
-exports.newMutableVar    = newMutableVar;
-exports.shadow           = shadow;
-exports.starter          = starter;
-exports.ender            = ender;
-exports.count            = count;
+exports.x                     = x;
+exports.y                     = y;
+exports.isXY                  = isXY;
+exports.stringFromChar        = stringFromChar;
+exports.greeting              = greeting;
+exports.space                 = space;
+exports.name                  = name;
+exports.oneSlash              = oneSlash;
+exports.multiLineString       = multiLineString;
+exports.unicodeString         = unicodeString;
+exports.style                 = style;
+exports.cssStyle              = cssStyle;
+exports.sub                   = sub;
+exports.displayGreeting       = displayGreeting;
+exports.goodRT                = goodRT;
+exports.content               = content;
+exports.greatRT               = greatRT;
+exports.anonymousScope        = anonymousScope;
+exports.petalLength           = petalLength;
+exports.sepalLength           = sepalLength;
+exports.flowerLength          = flowerLength;
+exports.myTuple               = myTuple;
+exports.compareBool           = compareBool;
+exports.aGreatNumber          = aGreatNumber;
+exports.sqaureInt             = sqaureInt;
+exports.aGreatFloat           = aGreatFloat;
+exports.circleArea            = circleArea;
+exports.aDopeTuple            = aDopeTuple;
+exports.twoTuple              = twoTuple;
+exports.first                 = first;
+exports.second                = second;
+exports.thirdIdx              = thirdIdx;
+exports.rotate                = rotate;
+exports.redSox                = redSox;
+exports.redSoxUpdate          = redSoxUpdate;
+exports.capital               = capital;
+exports.washington            = washington;
+exports.seattle               = seattle;
+exports.urStatus              = urStatus;
+exports.team                  = team$1;
+exports.myVar                 = myVar;
+exports.namePlayer            = namePlayer;
+exports.fibNum                = fibNum;
+exports.fibNumHeadZero        = fibNumHeadZero;
+exports.myNum                 = myNum;
+exports.fibArray              = fibArray;
+exports.length                = length$2;
+exports.lastItem              = lastItem;
+exports.fibList               = fibList;
+exports.fibBackAsArray        = fibBackAsArray;
+exports.noArg                 = noArg;
+exports.add                   = add;
+exports.square                = square;
+exports.addAndSquare          = addAndSquare;
+exports.stringIntConcat       = stringIntConcat;
+exports.calcTriangleArea      = calcTriangleArea;
+exports.multiplyByFive        = multiplyByFive;
+exports.res                   = res$1;
+exports.multiply              = multiply;
+exports.actualFunction        = actualFunction;
+exports.curriedFunction       = curriedFunction;
+exports.possibleName          = possibleName;
+exports.sayHello              = sayHello$1;
+exports.factorial             = factorial;
+exports.factorialEven         = factorialEven;
+exports.factorialOdd          = factorialOdd;
+exports.modalSize             = modalSize;
+exports.dialogSize            = dialogSize;
+exports.result                = result;
+exports.errResult             = errResult;
+exports.teams                 = teams;
+exports.ms                    = ms;
+exports.bosox                 = bosox;
+exports.stros                 = stros;
+exports.ts                    = ts;
+exports.myRecord              = myRecord;
+exports.al                    = al;
+exports.ar                    = ar;
+exports.destructured          = destructured;
+exports.myVictory             = myVictory;
+exports.myOTVictory           = myOTVictory;
+exports.arr                   = arr;
+exports.handleArray           = handleArray;
+exports.isServerError         = isServerError;
+exports.handleResult          = handleResult$1;
+exports.nested                = nested;
+exports.mutableVar            = mutableVar;
+exports.newMutableVar         = newMutableVar;
+exports.shadow                = shadow;
+exports.starter               = starter;
+exports.ender                 = ender;
+exports.count                 = count;
+exports.twoS                  = twoS;
+exports.anUntypedReasonObject = anUntypedReasonObject;
+exports.aTypedReasonObject    = aTypedReasonObject;
+exports.vt                    = vt;
+exports.spot                  = spot;
+exports.Earth                 = Earth;
+exports.aussie                = aussie;
+exports.fact                  = fact;
+exports.ExtendedBoston        = ExtendedBoston;
 /*  Not a pure module */

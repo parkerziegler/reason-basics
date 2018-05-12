@@ -627,7 +627,7 @@ let count = ref(1);
 while (count < ref(5)) {
     print_endline("We are looping!");
     count := count^ + 1;
-}
+};
 
 /* Use mutable bindings like above to break out of loops. Reason has no concept of a break keyword like JS. */
 
@@ -641,3 +641,110 @@ become:
 */
 /* The [@JSX] syntax flags a function as wanting to format as JSX. This allows any library in Reason, not just
 ReasonReact, to take advantage of JSX. */
+
+/* Externals */
+/* Externals are how Reason communicates with other languages, often JS. */
+/* One of the most common ways you use externals is to load modules. For example,
+let's load the findS function from the findS module */
+[@bs.module "./findS"] external findS : (string) => int = "";
+let twoS = findS("strings");
+print_int(twoS);
+
+/* Sweet! We called a JS function from Reason! The annotations above allow us to
+type the function findS from the findS module and return a typesafe reference to that module. */
+
+/* Object */
+/* Most of the time in Reason you'll be using a record to store named values. But sometimes, you'll want an object. Note than an object in
+Reason is not the same as a JS object. Prefix public values on the
+object with the pub keyword. */
+let anUntypedReasonObject = {
+    pub city = "Burlington";
+    pub state = "Vermont";
+};
+
+print_endline(anUntypedReasonObject#city);
+
+/* Reason objects don't need type definitions. If we do define them,
+the object must have the shape of the type provided. */
+type spot = {
+    .
+    city: string,
+    state: string,
+    population: int
+};
+
+let aTypedReasonObject: spot = {
+    pub city = "Burlington";
+    pub state = "Vermont";
+    pub population = 56000;
+};
+
+print_int(aTypedReasonObject#population);
+
+/* Two dots, known as elision, indicates that this object is open and
+can have properties other than the originally typed properties. Open objects
+are polymorphic and require a type parameter. */
+type openPlace('a) = {
+    ..
+    getPlace: unit => string
+} as 'a;
+
+/* Objects in Reason have a this context, which points at the object itself. */
+let vt: openPlace({. getPlace: unit => string }) = {
+    val address = "100 Church St";
+    val city = "Burlington";
+    val zipCode = "05712";
+    pub getPlace = () => address ++ ", " ++ city ++ " " ++ zipCode ++ ". " ++ this#addOn();
+    pri addOn = () => "Didn't ya know?"
+};
+
+let spot = vt#getPlace();
+print_endline(spot);
+
+/* Module */
+/* Modules in Reason can contain type defs, let bindings, nested modules, almost anything. Use the module keyword to create one. */
+module Earth = {
+    let continents = [|"Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", "South America"|];
+    let pickContinent = (idx: int) => continents[idx];
+};
+
+let aussie = Earth.pickContinent(3);
+print_endline(aussie);
+
+/* We can also access nested modules! Check out the Team module,
+which has a nested Botson module. */
+print_endline(Team.Boston.team);
+
+/* While Reason has great module inference - no imports! - it can be
+useful to explictly open a module. */
+/* Local open - good for ease of reasoning. */
+let fact = Team.Boston.(
+    switch (team) {
+    | "Red Sox" => "The Red Sox are DOPE."
+    | _ => "Eh, don't really care."
+    }
+);
+print_endline(fact);
+
+/* Global open - good for getting everything in another module */
+open Team.Boston;
+
+/* Modules can also extend one another, fulfilling the role of inheritcance
+or mixins in traditional OOP languages. */
+module ExtendedBoston = {
+    include Team.Boston;
+    let basketball = "Celtics";
+};
+
+print_endline(ExtendedBoston.team);
+print_endline(ExtendedBoston.basketball);
+
+/* Exception */
+/* Exceptions are a special kind of variant, and not used often in Reason. */
+/* let aFunkyList = ["Parliament", "Funkadelic", "George Clinton"];
+if (List.exists(item => item === "Stevie Wonder", aFunkyList)) {
+    print_endline("Yay Stevie!");
+} else {
+    /* Here we raise the Not_found constructor of the Exception variant */
+    raise(Not_found);
+}; */
