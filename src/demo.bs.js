@@ -2,6 +2,7 @@
 'use strict';
 
 var List                    = require("bs-platform/lib/js/list.js");
+var $$Array                 = require("bs-platform/lib/js/array.js");
 var Block                   = require("bs-platform/lib/js/block.js");
 var Curry                   = require("bs-platform/lib/js/curry.js");
 var $$String                = require("bs-platform/lib/js/string.js");
@@ -17,13 +18,21 @@ var CamlinternalOO          = require("bs-platform/lib/js/camlinternalOO.js");
 var Team$ReasonBasics       = require("./Team.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
-console.log("Hello, BuckleScript and Reason! \xe2\x80\x93 Luv BuckleScript");
+console.log("Hello, BuckleScript and Reason! Luv BuckleScript");
 
-console.log("Hello, BuckleScript and Reason! \xe2\x80\x93 Luv Reason");
+console.log("Hello, BuckleScript and Reason! Luv Reason");
 
 console.log(Pervasives.string_of_int(1));
 
 console.log(Pervasives.string_of_bool(/* true */1));
+
+Pervasives.print_int(1);
+
+Pervasives.print_newline(/* () */0);
+
+Pervasives.print_float(1.0);
+
+Pervasives.print_newline(/* () */0);
 
 function isXY($$char) {
   if ($$char === 121 || $$char === 120) {
@@ -37,25 +46,49 @@ var stringFromChar = $$String.make(1, /* "x" */120) + $$String.make(1, /* "y" */
 
 console.log(stringFromChar);
 
-var greeting = "hello";
+var greeting = "Hello";
 
 var space = " ";
 
 var name = "P-Doo";
 
-console.log("hello P-Doo");
+var exclamation = "!";
 
-var oneSlash = "\\";
+console.log("Hello P-Doo!");
 
-console.log(oneSlash);
+var whitespaceString = "   __trim me__   ";
 
-var multiLineString = "Hello\nParkie\nDoo";
+var trimmedString = $$String.trim(whitespaceString);
 
-console.log(multiLineString);
+console.log(trimmedString);
 
-var unicodeString = "••∆∆••";
+var atString = $$String.map((function (c) {
+        if (c !== 32) {
+          return c;
+        } else {
+          return /* "@" */64;
+        }
+      }), whitespaceString);
 
-console.log(unicodeString);
+console.log(atString);
+
+var slash = "\\";
+
+console.log(slash);
+
+var multilineString = "Hello\nReasonable\nFolks!";
+
+console.log(multilineString);
+
+var singlelineString = $$String.map((function (c) {
+        if (c !== 10) {
+          return c;
+        } else {
+          return /* " " */32;
+        }
+      }), multilineString);
+
+console.log(singlelineString);
 
 var style = "background-color: papayawhip";
 
@@ -63,27 +96,31 @@ var cssStyle = "" + (String(style) + "");
 
 console.log(cssStyle);
 
-var length = greeting.length;
+var unicodeString = "••∆∆••";
 
-console.log(Pervasives.string_of_int(length));
+console.log(unicodeString);
 
-var sub = $$String.sub(greeting, 1, 3);
+var background = "background-color: aquamarine";
 
-console.log(sub);
+var strLength = background.length;
+
+console.log(Pervasives.string_of_int(strLength));
+
+var subStr = $$String.sub(background, 0, $$String.index(background, /* "-" */45));
+
+console.log(subStr);
 
 console.log("Enjoying my ridiculous commentary yet?");
 
-var content = "This tweet has good RT.";
+var content = "This tweet is good.";
 
 console.log(content);
 
-var greatRT = "Most certainly.";
+var retweet = "Most certainly.";
 
-console.log(greatRT);
+console.log(retweet);
 
-console.log("Parker");
-
-var anonymousScope = (console.log("Seattle"), /* () */0);
+var anonymousScope = (console.log("" + (String("Parker") + (" works at " + (String("Formidable") + (" in " + (String("Seattle") + ".")))))), /* () */0);
 
 function flowerLength(petal, sepal) {
   return petal + sepal | 0;
@@ -101,7 +138,7 @@ function compareBool(tuple) {
   return +(tuple === myTuple);
 }
 
-console.log(Pervasives.string_of_bool(+(myTuple === myTuple)));
+console.log(Pervasives.string_of_bool(compareBool(myTuple)));
 
 console.log(Pervasives.string_of_bool(Caml_obj.caml_equal(/* tuple */[
               /* "M" */77,
@@ -119,17 +156,23 @@ console.log(Pervasives.string_of_bool(+(/* tuple */[
             23
           ])));
 
-function sqaureInt(num) {
+function squareInt(num) {
   return Caml_int32.imul(num, num);
 }
 
-console.log(Pervasives.string_of_int(400));
+console.log(Pervasives.string_of_int(81));
 
-function circleArea(num) {
-  return 3.1415926 * num * num;
+console.log(Pervasives.string_of_int(0));
+
+function circleArea(radius) {
+  return 3.1415926 * radius * radius;
 }
 
-console.log(Pervasives.string_of_float(3.1415926 * 314.2 * 314.2));
+console.log(Pervasives.string_of_float(3.1415926 * 20.0 * 20.0));
+
+var radius = Math.sqrt(3.1415926 * 20.0 * 20.0) / 3.1415926;
+
+console.log(Pervasives.string_of_float(radius));
 
 var first = "It";
 
@@ -139,25 +182,22 @@ console.log(first);
 
 console.log(second);
 
-console.log(Pervasives.string_of_int(44));
+console.log(Pervasives.string_of_int(100));
 
 function rotate(x, y) {
   if (x !== 90) {
-    if (x !== 180) {
-      console.log("nothing");
-      return /* () */0;
-    } else if (y !== -180) {
-      console.log("nothing");
+    if (x !== 180 || y !== -180) {
+      console.log("Hold steady!");
       return /* () */0;
     } else {
-      console.log("rotate " + (String(x) + (", " + (String(y) + ""))));
+      console.log("Rotate " + (String(x) + (", " + (String(y) + ""))));
       return /* () */0;
     }
   } else if (y !== -90) {
-    console.log("nothing");
+    console.log("Hold steady!");
     return /* () */0;
   } else {
-    console.log("turn " + (String(x) + (", " + (String(y) + ""))));
+    console.log("Turn " + (String(x) + (", " + (String(y) + ""))));
     return /* () */0;
   }
 }
@@ -166,10 +206,12 @@ rotate(180, -180);
 
 rotate(90, -90);
 
+rotate(50, 70);
+
 var redSox = /* record */[
   /* name */"Red Sox",
   /* rank */1,
-  /* average */5.6
+  /* average */0.326
 ];
 
 console.log(redSox[/* name */0]);
@@ -183,10 +225,10 @@ var redSoxUpdate_001 = /* rank */redSox[/* rank */1];
 var redSoxUpdate = /* record */[
   redSoxUpdate_000,
   redSoxUpdate_001,
-  /* average */6.8
+  /* average */0.418
 ];
 
-console.log(Pervasives.string_of_float(6.8));
+console.log(Pervasives.string_of_float(0.418));
 
 redSox[/* rank */1] = redSox[/* rank */1] + 1 | 0;
 
@@ -199,45 +241,69 @@ var washington = /* record */[
   /* population */6000000
 ];
 
-var seattle = /* record */[
-  /* state */washington,
-  /* team */"Mariners"
+var seattle_001 = /* team : record */[
+  /* name */"Mariners",
+  /* rank */3,
+  /* average */0.298
 ];
 
-function urStatus(status) {
+var seattle = /* record */[
+  /* state */washington,
+  seattle_001
+];
+
+var jsObject = {
+  response: {
+    data: {
+      starCount: 9,
+      watchers: 2
+    },
+    code: 200
+  }
+};
+
+var starCount = jsObject.response.data.starCount;
+
+console.log(Pervasives.string_of_int(starCount));
+
+function tweetStatus(status) {
   switch (status) {
     case 0 : 
-        return "You are dope!";
+        return "That was a dope tweet!";
     case 1 : 
-        return "You are sweet!";
+        return "Pretty sweet tweet!";
     case 2 : 
-        return "You are not bad!";
+        return "Not great, but not bad!";
     case 3 : 
-        return "You are dope af!";
+        return "Pretty af tweet my friend!";
     
   }
 }
 
-console.log("You are dope af!");
+console.log("Pretty af tweet my friend!");
 
-var myVar = /* RedSox */Block.__(0, ["Mookie Betts"]);
+var player = /* RedSox */Block.__(0, ["Mookie Betts"]);
 
-function namePlayer(teamArg) {
-  if (typeof teamArg === "number") {
-    return "Zdeno Chara";
-  } else if (teamArg.tag) {
-    var match = +(teamArg[1] < 2008);
+function namePlayer(arg) {
+  if (typeof arg === "number") {
+    if (arg) {
+      return "Zdeno Chara";
+    } else {
+      return "Malcolm Butler";
+    }
+  } else if (arg.tag) {
+    var match = +(arg[1] < 2008);
     if (match !== 0) {
-      return teamArg[0];
+      return arg[0];
     } else {
       return "Big 3";
     }
   } else {
-    return "You chose " + (String(teamArg[0]) + "");
+    return "You chose " + (String(arg[0]) + "");
   }
 }
 
-console.log(namePlayer(myVar));
+console.log(namePlayer(player));
 
 console.log(namePlayer(/* Celtics */Block.__(1, [
             "Larry Bird",
@@ -249,7 +315,19 @@ console.log(namePlayer(/* Celtics */Block.__(1, [
             1984
           ])));
 
-var fibNum = /* :: */[
+var possiblyNullInt = /* None */0;
+
+function checkNull(num) {
+  if (num) {
+    return /* false */0;
+  } else {
+    return /* true */1;
+  }
+}
+
+console.log(Pervasives.string_of_bool(checkNull(possiblyNullInt)));
+
+var fibList = /* :: */[
   1,
   /* :: */[
     1,
@@ -275,16 +353,41 @@ var fibNum = /* :: */[
   ]
 ];
 
-var fibNumHeadZero = /* :: */[
+var fibListHeadZero = /* :: */[
   0,
-  fibNum
+  fibList
 ];
 
-var myNum = List.nth(fibNum, 4);
+var five = List.nth(fibList, 4);
 
-var length$1 = List.length(fibNum);
+console.log(Pervasives.string_of_int(five));
 
-List.nth(fibNum, length$1 - 1 | 0);
+var length = List.length(fibList);
+
+List.nth(fibList, length - 1 | 0);
+
+var reverse = List.rev(fibList);
+
+var sum = List.fold_left((function (acc, el) {
+        return acc + el | 0;
+      }), 0, fibList);
+
+console.log(Pervasives.string_of_int(sum));
+
+var thirteen = List.find((function (item) {
+        return +(item === 13);
+      }), fibList);
+
+console.log(Pervasives.string_of_int(thirteen));
+
+var aboveTen = List.filter((function (item) {
+          return +(item > 10);
+        }))(fibList);
+
+List.iter((function (item) {
+        console.log(Pervasives.string_of_int(item));
+        return /* () */0;
+      }), aboveTen);
 
 var fibArray = /* array */[
   1,
@@ -297,9 +400,9 @@ var fibArray = /* array */[
   21
 ];
 
-var length$2 = fibArray.length;
+var length$1 = fibArray.length;
 
-var lastItem = Caml_array.caml_array_get(fibArray, length$2 - 1 | 0);
+var lastItem = Caml_array.caml_array_get(fibArray, length$1 - 1 | 0);
 
 Caml_array.caml_array_set(fibArray, 2, 500);
 
@@ -307,9 +410,13 @@ Caml_array.caml_array_set(fibArray, 2, 1000);
 
 Caml_array.caml_array_get(fibArray, 2);
 
-var fibList = ArrayLabels.to_list(fibArray);
+var fibArrayAsList = ArrayLabels.to_list(fibArray);
 
-var fibBackAsArray = ArrayLabels.of_list(fibList);
+var fibListAsArray = ArrayLabels.of_list(fibArrayAsList);
+
+var multiDemArray = $$Array.make_matrix(2, 2, "Initial.");
+
+console.log(multiDemArray);
 
 function noArg() {
   console.log("This is unit!");
@@ -507,7 +614,7 @@ function handleResult(res) {
           Caml_builtin_exceptions.match_failure,
           [
             "/Users/parkerziegler/Documents/repos/OSS/reason-basics/src/demo.re",
-            535,
+            623,
             48
           ]
         ];
@@ -546,7 +653,7 @@ function handleResult$1(res) {
           Caml_builtin_exceptions.match_failure,
           [
             "/Users/parkerziegler/Documents/repos/OSS/reason-basics/src/demo.re",
-            554,
+            642,
             48
           ]
         ];
@@ -796,26 +903,34 @@ console.log(team);
 
 console.log(basketball);
 
+var myVar = "myVar";
+
+var myInt = 1;
+
 var x = /* "x" */120;
 
 var y = /* "y" */121;
 
 var displayGreeting = /* true */1;
 
-var goodRT = /* true */1;
+var good = /* true */1;
 
 var petalLength = 5;
 
 var sepalLength = 20;
 
-var aGreatNumber = 20;
+var githubStars = 9;
 
-var aGreatFloat = 3.1415926;
+var start = 1;
 
-var aDopeTuple = /* tuple */[
-  /* "a" */97,
-  "Dope",
-  44,
+var remainder = 0;
+
+var pi = 3.1415926;
+
+var myTuple$1 = /* tuple */[
+  /* "A" */65,
+  "wonderful",
+  100,
   "tuple"
 ];
 
@@ -824,9 +939,13 @@ var twoTuple = /* tuple */[
   "Me"
 ];
 
-var thirdIdx = 44;
+var third = 100;
+
+var population$1 = 6000000;
 
 var team$1 = /* Mariners */0;
+
+var isNull = /* true */1;
 
 var modalSize = /* tuple */[
   150,
@@ -869,6 +988,8 @@ var starter = 1;
 
 var ender = 100;
 
+exports.myVar                 = myVar;
+exports.myInt                 = myInt;
 exports.x                     = x;
 exports.y                     = y;
 exports.isXY                  = isXY;
@@ -876,49 +997,69 @@ exports.stringFromChar        = stringFromChar;
 exports.greeting              = greeting;
 exports.space                 = space;
 exports.name                  = name;
-exports.oneSlash              = oneSlash;
-exports.multiLineString       = multiLineString;
-exports.unicodeString         = unicodeString;
+exports.exclamation           = exclamation;
+exports.whitespaceString      = whitespaceString;
+exports.trimmedString         = trimmedString;
+exports.atString              = atString;
+exports.slash                 = slash;
+exports.multilineString       = multilineString;
+exports.singlelineString      = singlelineString;
 exports.style                 = style;
 exports.cssStyle              = cssStyle;
-exports.sub                   = sub;
+exports.unicodeString         = unicodeString;
+exports.background            = background;
+exports.strLength             = strLength;
+exports.subStr                = subStr;
 exports.displayGreeting       = displayGreeting;
-exports.goodRT                = goodRT;
+exports.good                  = good;
 exports.content               = content;
-exports.greatRT               = greatRT;
+exports.retweet               = retweet;
 exports.anonymousScope        = anonymousScope;
 exports.petalLength           = petalLength;
 exports.sepalLength           = sepalLength;
 exports.flowerLength          = flowerLength;
-exports.myTuple               = myTuple;
 exports.compareBool           = compareBool;
-exports.aGreatNumber          = aGreatNumber;
-exports.sqaureInt             = sqaureInt;
-exports.aGreatFloat           = aGreatFloat;
+exports.githubStars           = githubStars;
+exports.squareInt             = squareInt;
+exports.start                 = start;
+exports.remainder             = remainder;
+exports.pi                    = pi;
 exports.circleArea            = circleArea;
-exports.aDopeTuple            = aDopeTuple;
+exports.radius                = radius;
+exports.myTuple               = myTuple$1;
 exports.twoTuple              = twoTuple;
 exports.first                 = first;
 exports.second                = second;
-exports.thirdIdx              = thirdIdx;
+exports.third                 = third;
 exports.rotate                = rotate;
 exports.redSox                = redSox;
 exports.redSoxUpdate          = redSoxUpdate;
 exports.capital               = capital;
+exports.population            = population$1;
 exports.washington            = washington;
 exports.seattle               = seattle;
-exports.urStatus              = urStatus;
+exports.jsObject              = jsObject;
+exports.starCount             = starCount;
+exports.tweetStatus           = tweetStatus;
 exports.team                  = team$1;
-exports.myVar                 = myVar;
+exports.player                = player;
 exports.namePlayer            = namePlayer;
-exports.fibNum                = fibNum;
-exports.fibNumHeadZero        = fibNumHeadZero;
-exports.myNum                 = myNum;
-exports.fibArray              = fibArray;
-exports.length                = length$2;
-exports.lastItem              = lastItem;
+exports.isNull                = isNull;
+exports.possiblyNullInt       = possiblyNullInt;
+exports.checkNull             = checkNull;
 exports.fibList               = fibList;
-exports.fibBackAsArray        = fibBackAsArray;
+exports.fibListHeadZero       = fibListHeadZero;
+exports.five                  = five;
+exports.reverse               = reverse;
+exports.sum                   = sum;
+exports.thirteen              = thirteen;
+exports.aboveTen              = aboveTen;
+exports.fibArray              = fibArray;
+exports.length                = length$1;
+exports.lastItem              = lastItem;
+exports.fibArrayAsList        = fibArrayAsList;
+exports.fibListAsArray        = fibListAsArray;
+exports.multiDemArray         = multiDemArray;
 exports.noArg                 = noArg;
 exports.add                   = add;
 exports.square                = square;

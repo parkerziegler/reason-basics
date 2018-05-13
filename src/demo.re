@@ -1,74 +1,104 @@
 /* reason-basics */
-/* let's learn some Reason */
+/* Not that this repository uses Reason's v3 syntax. */
+/* Let's learn some Reason! */
 
-/* commenting in Reason */
+/* Here's how we comment in Reason. */
 
-/* To log out to the console we can use BuckleScript's JS module */
-Js.log("Hello, BuckleScript and Reason! – Luv BuckleScript");
-/* We can also use Reason's native print_endline */
-print_endline("Hello, BuckleScript and Reason! – Luv Reason");
+/* To log out to the console we can use BuckleScript's JS module. */
+Js.log("Hello, BuckleScript and Reason! Luv BuckleScript");
+/* We can also use Reason's native print_* modules. */
+print_endline("Hello, BuckleScript and Reason! Luv Reason");
 /* Note that print_endline can only print strings. To print data structures use Js.log.
 Future support for this in the language is coming to Reason. */
-/* To print other types, use Reason's type coercion methods */
+
+/* To print other types, you can either use Reason's type coercion methods or print_* modules. */
 print_endline(string_of_int(1));
 print_endline(string_of_bool(true));
+/* If you use print_* methods, you need to use print_newline to
+get a new line. print_endline() appends the new line for you. */
+print_int(1);
+print_newline();
+print_float(1.0);
+print_newline();
 
 /* Variables */
 /* Variables in Reason are defined using let.
-There is no concept of const in Reason. */
+There is no concept of const in Reason as there is in JS. */
 let myVar = "myVar";
+let myInt = 1;
 
 /* Characters and Strings */
 /* Reason differentiates between characters - single quoted - and strings - double quoted. */
 let x = 'x';
 let y = 'y';
 
-/* Pattern matching a Character */
+/* Example of pattern matching a character. */
 let isXY = (char) : bool =>
     switch (char) {
         | 'x' | 'y' => true
         | _ => false
     };
 
-/* To convert characters to strings, use String.make, passing 1 as the first arg */
+/* To convert characters to strings, use String.make, passing 1 as the first arg. */
 let stringFromChar: string = String.make(1, x) ++ String.make(1, y);
 print_endline(stringFromChar);
 
-/* Strings are concatenated using the ++ operator */
-let greeting = "hello";
+/* Strings are concatenated using the ++ operator. */
+let greeting = "Hello";
 let space = " ";
 let name = "P-Doo";
-print_endline(greeting ++ space ++ name);
+let exclamation = "!";
+print_endline(greeting ++ space ++ name ++ exclamation);
 
-/* Special characters in strings need to be escaped using \ */
-let oneSlash = "\\";
-print_endline(oneSlash);
+/* We can operate on strings using String methods from the standard library (Reason's built in methods). */
+let whitespaceString = "   __trim me__   ";
+let trimmedString = String.trim(whitespaceString);
+print_endline(trimmedString);
+let atString = String.map((c) => {
+    switch (c) {
+    | ' ' => '@';
+    | _ => c;
+    };
+}, whitespaceString);
+print_endline(atString);
 
-/* Reason also supports multiline strings, similar to tagged template literals */
-let multiLineString = {|Hello
-Parkie
-Doo|};
-print_endline(multiLineString);
+/* Special characters in strings need to be escaped using \. */
+let slash = "\\";
+print_endline(slash);
+
+/* Reason also supports multiline strings, similar to JS template literals. They are demarcated using {| |}*/
+let multilineString = {|Hello
+Reasonable
+Folks!|};
+print_endline(multilineString);
+/* String methods work the same on multiline strings. For example,
+to convert a multiline string to a singleline string. */
+let singlelineString = String.map((c) => {
+    switch (c) {
+    | '\n' => ' '
+    | _ => c
+    }
+}, multilineString);
+print_endline(singlelineString);
+
+/* To interpolate variables in multiline strings, surround the string in j| |j. */
+let style = "background-color: papayawhip";
+let cssStyle = {j|$style|j};
+print_endline(cssStyle);
 
 /* To use unicode characters in a string in Reason, use js| |js */
 let unicodeString = {js|••∆∆••|js};
 print_endline(unicodeString);
 
-/* To interpolate variables in multiline strings, use surround the string in j| |j */
-let style = "background-color: papayawhip";
-let cssStyle = {j|$style|j};
-print_endline(cssStyle);
-
-/* The String module gives us access to common string operators like length access */
-let length: int = String.length(greeting);
-print_endline(string_of_int(length));
-
-/* And substrings */
-let sub: string = String.sub(greeting, 1, 3);
-print_endline(sub);
+/* To get string lengths and substrings... */
+let background = "background-color: aquamarine";
+let strLength: int = String.length(background);
+print_endline(string_of_int(strLength));
+let subStr: string = String.sub(background, 0, String.index(background, '-'));
+print_endline(subStr);
 
 /* Conditionals */
-/* Coonditionals work similarly to JavaScript. However, an `if` statement without an `else`
+/* Coonditionals work similarly to JS. However, an `if` statement without an `else`
 implictly evaluates to else { () }, the unit type. */
 let displayGreeting = true;
 if (displayGreeting) {
@@ -76,110 +106,123 @@ if (displayGreeting) {
   print_endline(message);
 };
 
-/* Ifs are evaluated to their body content – their is no need for a return statement */
-let goodRT = true;
-let content = if (goodRT) {
-    "This tweet has good RT."
+/* Conditionals are evaluated to their body content – there is no need for a return statement. */
+let good = true;
+let content = if (good) {
+    "This tweet is good."
 } else {
-    "This tweet has bad RT."
+    "This tweet is bad. Please make it better."
 };
 print_endline(content);
+/* It is essential that there be an else block evaluating to a string
+in the block above. If there wasn't, content would be assigned the unit
+type, although it is intended to be a string. This will yield a compiler error. */
 
 /* There is also support for the ternary operator. */
-let greatRT = goodRT ? "Most certainly." : "Not so much.";
-print_endline(greatRT);
+let retweet = good ? "Most certainly." : "Eh, don't think so.";
+print_endline(retweet);
 
 /* Scoping */
-/* Variables are block-scoped and can be anonymously scoped */
+/* Variables are block-scoped by default.
+let bindings can create anonymous scopes by using {}. */
 let anonymousScope = {
     let name = "Parker";
+    let company = "Formidable";
     let place = "Seattle";
-    print_endline(name);
-    print_endline(place);
+    print_endline({j|$name works at $company in $place.|j});
 };
 
-/* Name and Place are inaccessible here because they are held
+/* name, company, and place are inaccessible here because they are held
 by the anonymous scope created above. Attempting to access them
-will throw an error! */
+outside of their scope will throw an error! */
 
 /* Types! */
 /* Reason is backed by OCaml's top notch type system. */
 /* We can explicitly type our variables, although this is not required.
-Reason will infer types for us. */
+Reason will often infer types for us. */
 let petalLength: int = 5;
 
 /* We can also alias types. */
-type flowerType = int;
+type sepalLength = int;
 
 /* And then use them! */
-let sepalLength: flowerType = 20;
+let sepalLength: sepalLength = 20;
 
 /* We type function returns by annotating the argument. */
-let flowerLength = (petal: int, sepal: int) : int => petal + sepal;
-
-/* To print we need to call string_of_int to cast our int result to a string! */
+let flowerLength = (petal: int, sepal: sepalLength) : int => petal + sepal;
 print_endline(string_of_int(flowerLength(petalLength, sepalLength)));
 
 /* Boolean */
-/* Boolean comparisons in Reason are similar to JS */
+/* Boolean comparisons in Reason are similar to JS. */
 /* === represents referential equality while == represents structural equality */
 /* Be careful using ==, Reason will warn you about this! */
 let myTuple = ("Parkie", "is", 1);
 let compareBool = tuple : bool => tuple === myTuple;
 print_endline(string_of_bool(compareBool(myTuple)));
 
-/* This line will yield "polymorphic comparison introduced (maybe unsafe)" */
+/* This line will yield "polymorphic comparison introduced (maybe unsafe)". */
 print_endline(string_of_bool(('M', 23) == ('M', 23)));
-/* This line is ok */
+/* This line produces no warnings. */
 print_endline(string_of_bool(('M', 23) === ('M', 23)));
 
 /* Integers and Floats */
 /* Reason has concepts of both integers and floats
-as opposed to just JS numbers */
-let aGreatNumber: int = 20;
-let sqaureInt = (num: int) : int => num * num;
-print_endline(string_of_int(sqaureInt(aGreatNumber)));
+as opposed to just JS numbers. */
+let githubStars: int = 9;
+let squareInt = (num: int) : int => num * num;
+print_endline(string_of_int(squareInt(githubStars)));
 
-/* Floats have a unique operand syntax, apending "." to +, -, *, / */
-let aGreatFloat: float = 3.1415926;
-let circleArea = (num: float) : float => aGreatFloat *. num *. num;
-print_endline(string_of_float(circleArea(314.2)));
+/* To work with ints, use methods from Reason's Pervasives module.
+These are already available in the scope. */
+let start: int = 1;
++ start; /* unary add */
+- start; /* unary minus */
+let remainder = 20 mod 5; /* modulo */
+print_endline(string_of_int(remainder));
+
+/* Floats have a unique operand syntax, apending "." to +, -, *, / operators. */
+let pi: float = 3.1415926;
+let circleArea = (radius: float) : float => pi *. radius *. radius;
+print_endline(string_of_float(circleArea(20.0)));
+let radius = sqrt(circleArea(20.0)) /. pi;
+print_endline(string_of_float(radius));
 
 /* Tuples */
 /* Tuples are immutable, ordered, finite at creation, and of heterogeneous type
 (though they can be all the same type). */
 /* Tuple types just mimic the shape of the tuples they represent! */
-let aDopeTuple: (char, string, int, string) = ('a', "Dope", 44, "tuple");
+let myTuple: (char, string, int, string) = ('A', "wonderful", 100, "tuple");
 
 /* There are special methods for getting tuple elements for tuples of length 2. */
-/* Use the Pervasives module to get access to them */
+/* These are avialable on the Pervasives module. */
 let twoTuple: (string, string) = ("It", "Me");
-let first: string = Pervasives.fst(twoTuple);
-let second: string = Pervasives.snd(twoTuple);
+let first: string = fst(twoTuple);
+let second: string = snd(twoTuple);
 print_endline(first);
 print_endline(second);
 
 /* Most tuple elements are accessed using destructuring */
-let (_, _, thirdIdx: int, _) = aDopeTuple;
-print_endline(string_of_int(thirdIdx));
+let (_, _, third: int, _) = myTuple;
+print_endline(string_of_int(third));
 
-/* Tuples are especially useful for pattern matching multiple possible combinations. */
+/* Tuples are especially useful for pattern matching multiple parameters. */
 let rotate = (x, y) => {
     switch (x, y) {
-    | (180, -180) => print_endline({j|rotate $x, $y|j})
-    | (90, -90) => print_endline({j|turn $x, $y|j})
-    | (_, _) => print_endline({j|nothing|j})
+    | (180, -180) => print_endline({j|Rotate $x, $y|j})
+    | (90, -90) => print_endline({j|Turn $x, $y|j})
+    | (_, _) => print_endline("Hold steady!")
     }
 };
 
 rotate(180, -180);
 rotate(90, -90);
+rotate(50, 70);
 
 /* Records */
 /* Records are similar to JS objects, but are lighter, immutable by default,
 fixed in field names and types, faster, more rigidly typed. */
 /* Record types are required – the compiler will error if they are not included! */
-/* Prepend the type with mutable to indicate a mutable field. */
+/* Prepend a mutable property with the mutable keyword. */
 type team = {
     name: string,
     mutable rank: int,
@@ -189,18 +232,18 @@ type team = {
 let redSox: team = {
     name: "Red Sox",
     rank: 1,
-    average: 5.6
+    average: 0.326
 };
 
 /* Record keys are accessed via dot notation */
 print_endline(redSox.name);
 print_endline(string_of_float(redSox.average));
 
-/* New records are created immutably from old records using the spread operator */
-/* However, spread cannot add new fields as records are constrained by type */
+/* New records are created immutably from old records using the spread operator. */
+/* However, spread cannot add new fields as records are constrained by type. */
 let redSoxUpdate = {
     ...redSox,
-    average: 6.8
+    average: 0.418
 };
 
 print_endline(string_of_float(redSoxUpdate.average));
@@ -210,8 +253,9 @@ redSox.rank = redSox.rank + 1;
 print_endline(string_of_int(redSox.rank));
 
 /* Records also have punning in Reason, similar to ES6 object shorthand syntax. This
-allows you to provide just the key name if the value matches */
+allows you to provide just the key name if the value matches. */
 let capital = "Olympia";
+let population = 6000000;
 type state = {
     capital: string,
     population: int
@@ -219,43 +263,62 @@ type state = {
 
 let washington: state = {
     capital,
-    population: 6000000
+    population
 };
 
 /* You can also pun with types! */
 type place = {
     state,
-    team: string
+    team
 };
 
-let seattle = {
+let seattle: place = {
     state: washington,
-    team: "Mariners"
+    team: {
+        name: "Mariners",
+        rank: 3,
+        average: 0.298
+    }
 };
 
 /* While records are somewhat similar to JS objects, you have to be more cognizant of their types. */
 /* Use records for data that doesn't change shape. Records are compiled to JS arrays with array index
-access, making them blazingly fast. Changing the type of a record can also help flag where you need
+access, making them fast. Changing the type of a record can also help flag where you need
 to update your data strucutres, making debugging easier! */
+
+/* If you are interested in using JS native objects, Reason provides a shorthand syntax. This involves
+wrapping key names with double quotes (""). */
+let jsObject = {
+    "response": {
+        "data": {
+            "starCount": 9,
+            "watchers": 2
+        },
+        "code": 200
+    }
+};
+/* To access fields, use the ## notation. */
+let starCount: int = jsObject##response##data##starCount;
+print_endline(string_of_int(starCount));
 
 /* Variant */
 /* Variants are a unique data structure in Reason. They allow us to express this or that relationships. */
-type veryCoolVariant = 
-  | Dope /* These are called a variant's constructors or tags */
+type tweetQuality = 
+  | Dope /* These are called a variant's constructors or tags. */
   | Sweet
   | NotBad
   | AF;
 
 /* Variants are typically moved with Reason's switch statement to pattern match */
-let urStatus = (status) : string =>
+let tweetStatus = (status) : string =>
     switch (status) {
-    | Dope => "You are dope!";
-    | Sweet => "You are sweet!";
-    | NotBad => "You are not bad!";
-    | AF => "You are dope af!";
+    | Dope => "That was a dope tweet!";
+    | Sweet => "Pretty sweet tweet!";
+    | NotBad => "Not great, but not bad!";
+    | AF => "Pretty af tweet my friend!";
     };
 
-print_endline(urStatus(AF));
+print_endline(tweetStatus(AF));
 
 /* Variants need explicit definitions. Import them by calling the module they reside in. */
 let team: Team.seattleVariant = Mariners;
@@ -270,54 +333,75 @@ type seattleArgVariant =
 
 This looks a lot like function arguments! We can use this to our advantage in pattern matching!
 */
-
-type bostonArgVariant =
-  | RedSox(string)
-  | Celtics(string, int)
-  | Bruins;
-
-let myVar = RedSox("Mookie Betts");
-
-let namePlayer = (teamArg) =>
-    switch (teamArg) {
+open Team;
+let player: Team.bostonVariant = RedSox("Mookie Betts");
+let namePlayer = (arg) =>
+    switch (arg) {
     | RedSox(name) => {j|You chose $name|j}
     | Celtics(name, year) => year < 2008 ? name : "Big 3"
+    | Patriots => "Malcolm Butler"
     | Bruins => "Zdeno Chara"
     };
 
-print_endline(namePlayer(myVar));
+print_endline(namePlayer(player));
 print_endline(namePlayer(Celtics("Larry Bird", 2009)));
 print_endline(namePlayer(Celtics("Larry Bird", 1984)));
 
 /* The standalone library exposes some cool variants for you. */
-/* type option('a) = None | Some('a); - this allows yo to define types that can be nullable or undefined */
+/* type option('a) = None | Some('a); - this allows you to define types that can be nullable or undefined. */
 /* For example -> option(int) types a variable as a nullable integer */
+let isNull = true;
+let possiblyNullInt: option(int) = if (isNull) {
+    None
+} else {
+    Some(5);
+};
+let checkNull = (num: option(int)) => {
+    switch (num) {
+    | Some(int) => false;
+    | None => true;
+    }
+};
+print_endline(string_of_bool(checkNull(possiblyNullInt)));
 
 /* List & Array */
 /* Lists are homogenous, immutable, and fast at prepending items. */
 
 /* Lists look a lot like arrays in JS. */
-let fibNum: list(int) = [1, 1, 2, 3, 5, 8, 13, 21];
+let fibList: list(int) = [1, 1, 2, 3, 5, 8, 13, 21];
 
 /* To prepend to a list, use the spread operator. This doesn't mutate the original list.
-fibNumHeadZero shares its elements with fibNum, making it very efficient. */
-let fibNumHeadZero = [0, ...fibNum];
+fibListHeadZero shares its elements with fibList, making it very efficient. */
+let fibListHeadZero = [0, ...fibList];
 
 /* It's important to note that using double spread [a, ...b, ...c] is not allowed in Reason. */
 
 /* To access an arbitrary list item use List.nth */
-let myNum = List.nth(fibNum, 4);
+let five = List.nth(fibList, 4);
+print_endline(string_of_int(five));
 
-/* To get the length of the list use List.length */
-let length: int = List.length(fibNum);
-let lastItem: int = List.nth(fibNum, length - 1);
+/* To get the length of the list use List.length. */
+let length: int = List.length(fibList);
+let lastItem: int = List.nth(fibList, length - 1);
+
+/* The List module in Reason comes with built-in methods for operating
+on lists. */
+let reverse = List.rev(fibList);
+let sum = List.fold_left((acc, el) => acc + el, 0, fibList);
+print_endline(string_of_int(sum));
+let thirteen = List.find((item) => item === 13, fibList);
+print_endline(string_of_int(thirteen));
+let aboveTen = List.filter((item) => item > 10, fibList);
+List.iter((item) => {
+    print_endline(string_of_int(item));
+}, aboveTen);
 
 /* Arrays are like lists, but are mutable and optimized for random access and updates.
-They are fix-sized on native, but flexibly-sized on JS. */
+They are of fixed size on native, but flexibly sized on JS. */
 /* Arrays are denoted with [| and |]. */
 let fibArray: array(int) = [|1, 1, 2, 3, 5, 8, 13, 21|];
 
-/* Array access and update is similar to JS */
+/* Array access and update is similar to JS. */
 let length: int = Array.length(fibArray);
 let lastItem: int = fibArray[length - 1];
 fibArray[2] = 500;
@@ -327,12 +411,18 @@ Array.set(fibArray, 2, 1000);
 Array.get(fibArray, 2);
 
 /* To convert an array to a list use ArrayLabels module. */
-let fibList: list(int) = ArrayLabels.to_list(fibArray);
-let fibBackAsArray: array(int) = ArrayLabels.of_list(fibList);
+let fibArrayAsList: list(int) = ArrayLabels.to_list(fibArray);
+let fibListAsArray: array(int) = ArrayLabels.of_list(fibArrayAsList);
+
+/* Reason also supports multi-dimensional arrays. The first two
+arguments specify the dimensions of the array, whilte the third
+arg fills the array entries initially. */
+let multiDemArray = Array.make_matrix(2, 2, "Initial.");
+Js.log(multiDemArray);
 
 /* Function */
 /* Functions are declared using => with a return expression. Single line functions can be inline.
-Multiline functions should be surrounded by {} */
+Multiline functions should be surrounded by {}. */
 
 /* In Reason, all functions have arguments. If no explicit args are passed, we pass the "()" value,
 which is called "unit" in Reason. */
@@ -346,13 +436,12 @@ print_endline(string_of_int(addAndSquare(4)));
 
 /* Reason also has a concept of labeled arguments. Because Reason supports currying, we can use
 labeled arguments to specify args in any order. */
-let stringIntConcat = (~int: int, ~str: string) => string_of_int(int) ++ " " ++ str;
-let res = stringIntConcat(~str="is an int.", ~int=50);
-print_endline(res);
+let concatStringInt = (~int: int, ~str: string) => string_of_int(int) ++ " " ++ str;
+print_endline(concatStringInt(~str="is an int.", ~int=50));
 
 /* You can also alias labeled arguments to use in a function. */
-let calcTriangleArea = (~base as b, ~height as h) => 0.5 *. b *. h;
-print_endline(string_of_float(calcTriangleArea(2.0, 7.0)));
+let calcTriangleArea = (~base as b: float, ~height as h: float) : float => 0.5 *. b *. h;
+print_endline(string_of_float(calcTriangleArea(~base=2.0, ~height=7.0)));
 
 /* Currying */
 /* Reason functions can automatically be partially called. */
