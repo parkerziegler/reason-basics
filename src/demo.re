@@ -445,12 +445,13 @@ print_endline(string_of_float(calcTriangleArea(~base=2.0, ~height=7.0)));
 
 /* Currying */
 /* Reason functions can automatically be partially called. */
+/* In fact, all functions in Reason accept a single argument! */
 let multiply = (x, y) => x * y;
 let multiplyByFive = multiply(5);
-let res = multiplyByFive(6);
-print_endline(string_of_int(res));
+let result = multiplyByFive(6);
+print_endline(string_of_int(result));
 
-/* is equivalent to */
+/* The multiply function above is equivalent to... */
 let multiply = (x) => (y) => x * y;
 
 /* OCaml optimizes this for us as a way to avoid unnecessary function allocation. */
@@ -469,21 +470,25 @@ let sayHello = (~greeting as g, ~name=?, ()) => {
 sayHello(~greeting="Marhaba", ());
 sayHello(~greeting="Ahlan ya", ~name="Parker", ());
 
-/* Notice the parens () in the function definition and call above. Without it, Reason can't parse the
-function. Both greeting and name can be curried and applied out of order, so it's unclear what 
-something like sayHello(~greeting) would mean. OCaml parses the () as indicating that the optional 
-labeled arg is omitted. Otherwise, it parses the function as the curried function waiting for name
-to be applied. */
+/* Notice the parens () in the third index of the function definition and call above. Without it,
+Reason can't parse the function. Both greeting and name can be curried and applied out of order,
+so it's unclear what  something like sayHello(~greeting) would mean. OCaml parses the () as indicating
+that the optional  labeled arg is omitted. Otherwise, it parses the function as the curried function
+waiting for name to be applied. */
+
+/* Here we are calling the actual function sayHello as defined above. */
 let actualFunction = sayHello(~greeting="Marhaba", ());
+/* Here we return a function that could accept the ~name argument. */
 let curriedFunction = sayHello(~greeting="Marhaba");
+curriedFunction(~name="Parker", ());
 
 /* Sometimes, you don't know whether the value you're forwarding to a function is None or Some(val).
-In this case, you can provide an explictly passed optional. */
+In this case, you can provide an explictly passed option type. */
 let possibleName: option(string) = Some("Formidable");
 sayHello(~greeting="Hi ya", ~name=?possibleName, ());
 
 /* If possibleName had the constructor None, the above function would still work! */
-/* You can also provide default values, like ES6. */
+/* You can also provide default values, like JS. */
 let sayHello = (~greeting="Aloha", ~name=?, ()) => {
     let person =
         switch (name) {
@@ -508,28 +513,56 @@ print_endline(string_of_int(factorial(5)));
 
 /* Mutually Recursive Functions */
 /* Functions can recursively call each other in Reason. Use the "and" keyword to make this happen. */
+/* Don't pay too much attention to this exception just yet, we'll get here. */
+exception FactorialArgument(string);
 let rec factorialEven = (num: int) => {
     if (num === 0) {
         1
     } else {
-        num * factorialOdd(num - 1)
-    }
-} and factorialOdd = (num: int) => num * factorialEven(num - 1);
+        switch (num mod 2) { /* Pattern match to check if the number is even or odd. */
+        | 0 => num * factorialOdd(num - 1);
+        | 1 => raise(FactorialArgument("factorialEven only accepts even-numbered arguments."));
+        | _ => 1
+        };
+    };
+} and factorialOdd = (num: int) => {
+    if (num === 0) {
+        1
+    } else {
+        switch (num mod 2) {
+        | 0 => raise(FactorialArgument("factorialOdd only accepts odd-numbered arguments."));
+        | 1 => num * factorialEven(num - 1);
+        | _ => 1
+        };
+    };
+};
 print_endline(string_of_int(factorialEven(6)));
+print_endline(string_of_int(factorialOdd(5)));
+/* Uncomment the line below to see this function throw! */
+/* print_endline(string_of_int(factorialEven(5))); */
 
 /* If you're coming from JS, the usefulness of the above pattern comes into play because
-Reason / OCaml does not hoist variable or function declarations! */
+Reason / OCaml does not hoist variable or function declarations! Consider how you would call
+two functions, a and b, that call one another. This is possible in JS because function
+declarations are hoisted to the top of the scope. Since Reason has no hoisting, mutual
+recursion is one technique for solving this problem. */
 
 /* More on Types */
 /* You can create parameterized types in Reason to make types more expressive. */
 /* They act like functions, accepting parameters and returning types. */
+/* Type parameters are prefixed with ' */
 type measurements('a) = ('a, 'a);
 type measurementsInt = measurements(int);
 type measurementsString = measurements(string);
 
 /* inline */
 let modalSize: measurements(int) = (150, 300);
+let modalArea = fst(modalSize) * snd(modalSize);
+print_endline(string_of_int(modalArea));
 let dialogSize: measurements(string) = ("500", "1000");
+let (w, h) = dialogSize;
+let dialogDescription = {j|This dialog is $w by $h px|j};
+print_endline(dialogDescription);
 
 /* Most of the time, type inference will take care of this for you. */
 /* Types can also make use of variants. */
@@ -546,77 +579,99 @@ type payload = {
 let result: httpResult(payload, int) = Success({ data: "Woohoo", code: 200 });
 let errResult: httpResult(payload, int) = Failure(404);
 
+/* Because Reason's type system allows for type-level functions, which remove the need for
+a lot of boilerplate. For example, we can use list(int) and list(string) rather than needing
+to create a new primitive type for each, i.e. listOfInt and listOfString. This makes Reason's
+type system supremely expressive, while still providing the scaffolding of a rock solid type
+system. Enjoy! */
+
 /* Mutually Recursive Types */
 /* Types, like functions, can be mutually recursive. */
 type professor = {
-    course: list(course)
+    courses: list(course)
 } and course = {
+    name: string,
     professor: professor
 };
 
 /* Destructuring */
 /* Destructuring is a common pattern in Reason and is useful for pulling data out of structures. */
 let teams = ("Mariners", "Red Sox", "Astros", "Twins");
-let (ms, bosox, stros, ts) = teams;
-print_endline(ms);
+let (ms, bosox, stros, twins) = teams;
+print_endline({j|$ms, $bosox, $stros,  $twins === Parkie-Doo's playoff picks.|j});
 
-/* You can also alias named fields. */
-type musicRecord = {
-    album: string,
-    artist: string
+/* Here's how to destructure a Reason record. It looks a lot like object destructuring in JS. */
+type album = {
+    name: string,
+    artist: string,
+    year: int
 };
 
-let myRecord = {
-    album: "Illinois",
-    artist: "Sufjan Stevens"
+let myFavoriteAlbum: album = {
+    name: "Illinois",
+    artist: "Sufjan Stevens",
+    year: 2004
 };
-let { album: al, artist: ar } = myRecord;
-print_endline(al);
 
-/* You can even destructure and alias function args! */
-type wowza = {
-    exclamation: string
+let { name, artist, year } = myFavoriteAlbum;
+print_endline({j|$artist wrote $name in $year.|j});
+
+/* You can also alias variables when you destructure them, all in a single line! */
+let { name: n, artist: a, year: y } = myFavoriteAlbum;
+print_endline({j|$a wrote $n in $y.|j});
+
+/* You can even destructure and alias function arguments! */
+type exclamation = {
+    phrase: string,
+    volume: float
 };
-let destructured = (~wowza as {exclamation} as wowZA) => {
-    /* You have access to both exclamation as the string and
-    wowZA as the original record here. */
-    print_endline(exclamation);
-    print_endline(wowZA.exclamation);
+let exclaim = (~exclamation as { phrase } as exclamation) => {
+    /* You have access to both exclamation (the record) and
+    the phrase property as a destructured variable. */
+    print_endline({j|And lo, Parkie-Doo shouted, $phrase at $exclamation.volume DB.|j});
 };
-destructured(~wowza={exclamation: "Breathtaking, this Reason!"});
+exclaim(~exclamation={phrase: "Breathtaking, this Reason!", volume: 120.7});
 
 /* Pattern Matching */
+/* Pattern matching is a great way to match your data against a set of values. Pattern
+matching is best used in tandem with variants – when does this way, we get nice, comprehensive
+assistance from the type system, which checks for unmatched cases. */
 type victory = 
   | NailBiter(int)
   | BlowOut(int)
   | OT(string, int);
 
-let myVictory = OT("8:03", 1);
+let myVictory: victory = OT("8:03", 1);
 
-/* Pattern matching allows us to destructure things like variants, handling each case separately.
-The compiler will also let you know of an unhandled case. Try commenting out BlowOut below. */
+/* Pattern matching allows us to destructure variants, handling each case separately.
+To see the compiler warn you about an unmatched case, try commenting out BlowOut below. */
 let myOTVictory = switch (myVictory) {
-| NailBiter(margin) => "Yeesh, close game. Nice win by " ++ string_of_int(margin) ++ "."
-| BlowOut(margin) => "Damn, what a blowout. " ++ string_of_int(margin) ++ " runs is impressive."
-| OT(time, margin) => "It took you " ++ time ++ " to win by " ++ string_of_int(margin) ++ "."
+| NailBiter(margin) => {j|Yeesh, close game. Nice win by $margin.|j};
+| BlowOut(margin) => {j|Damn, what a blowout. $margin runs is impressive|j};
+| OT(time, margin) => {j|It took $time to win by $margin. But a win's a win.|j};
 };
 
 print_endline(myOTVictory);
 
-/* We can switch on other cases with other data structures as well. */
+/* We can switch on other cases with other data structures as well. For example, an array(int). */
 let arr = [|500, 600|];
 
 let handleArray = (array: array(int)) => {
-    switch (arr) {
+    switch (array) {
     | [|500, 601|] => print_endline("This is a very specific case.");
+    | [|500, _|] => print_endline("You have two items in this array, and the first is 500.");
     | [|_, _|] => print_endline("You have two items in this array.");
     | _ => print_endline("This is the default.");
     };
 };
 
 handleArray(arr);
+handleArray([|500, 601|]);
+handleArray([|101, 102|]);
+handleArray([|1|]);
 
-/* You can even pattern match a set of results to a particular outcome. */
+/* You can even pattern match a set of results to a particular outcome. For example,
+let's map errors on the server to particular outcomes. */
 type httpResultWithCode =
   | Success(int, list(string))
   | Failure(int);
@@ -625,100 +680,115 @@ let handleResult = (res: httpResultWithCode) => {
     switch (res) {
     | Success(200, data) => {
         let f = (acc, el) => acc ++ " " ++ el;
+        /* We're using fold_left here to concatenate strings. fold_left is similar to
+        reduce, but for lists! */
         let resString = ListLabels.fold_left(~f=f, ~init="", data);
-        print_endline("You've got data." ++ resString ++ ".")
+        print_endline({j|data: $resString|j})
     };
-    | Failure(500) | Failure(502) => print_endline("Things got messed up :(.");
-    | Failure(404) => print_endline("We couldn't find that, sorry :(.");
+    | Failure(500) | Failure(502) => print_endline("Server error.");
+    | Failure(404) => print_endline("Not found.");
+    | _ => print_endline("We don't know what happened, sorry!");
     };
 };
 
 handleResult(Failure(500));
+handleResult(Failure(502));
 handleResult(Success(200, ["You", "Rock"]));
+handleResult(Success(201, ["You", "Are", "Still", "Great"]));
 
-/* You can also use when clauses to check specific conditions on a case. */
+/* You can also use when clauses to check specific conditions on a case. This is
+like adding a little bit of if sugar to your pattern matching logic. */
 /* Expanding on our previous example above: */
 let isServerError = (err) => err === 500;
+let isBadGateway = (err) => err === 502;
 
 let handleResult = (res: httpResultWithCode) => {
     switch (res) {
     | Success(200, data) => {
         let f = (acc, el) => acc ++ " " ++ el;
         let resString = ListLabels.fold_left(~f=f, ~init="", data);
-        print_endline("You've got data." ++ resString ++ ".")
+        print_endline({j|data: $resString|j})
     };
-    | Failure(errCode) when isServerError(errCode) => print_endline("Things got messed up on the server :(.");
-    | Failure(errCode) => print_endline("Bad gateway. Getaway? Who knows? :(.")
-    | Failure(404) => print_endline("We couldn't find that, sorry :(.");
+    | Failure(errCode) when isServerError(errCode) => print_endline("Server error.");
+    | Failure(errCode) when isBadGateway(errCode) => print_endline("Bad gateway. Getaway? Who knows?")
+    | Failure(404) => print_endline("Not found.");
+    | _ => print_endline("We don't know what happened, sorry!");
     };
 };
 
 handleResult(Failure(500));
 handleResult(Failure(502));
 
+/* You can also nest patterns, meaning we can pattern match
+on nested properties of data structures. */
 type composer = {
     name: string,
     concertos: int
 };
 
-/* You can also nest patterns! */
-let nested = (composer: composer) =>
+let evaluateComposer = (composer: composer) =>
     switch (composer) {
-    | {name: "Beethoven" | "Mozart" | "Debussy"} => "Wowza!"
-    | composer when composer.concertos <= 7 => "Boo!"
+    | {name: "Beethoven" | "Mozart" | "Debussy"} => "What high class. How fancy!"
+    | composer when composer.concertos <= 7 => "Not too bad, but nothing special."
     | _ => "Just another composer"
 };
 
-print_endline(nested({name: "Debussy", concertos: 57}));
-print_endline(nested({name: "Jerry", concertos: 7}));
+print_endline(evaluateComposer({name: "Debussy", concertos: 57}));
+print_endline(evaluateComposer({name: "Jerry", concertos: 7}));
 
 /* Mutation */
-/* let bindings are, by default, immutable. If you need to mutate a let binding you can use the ref keyword. */
+/* let bindings are, by default, immutable.
+If you need to mutate a let binding use the ref keyword. */
 let mutableVar = ref("mutable");
 
-/* To access it, use the postfix ^ operator. */
-let newMutableVar = mutableVar^;
+/* To access it, use the ^ operator. */
+let mutableReference = mutableVar^;
 
-/* And assignment uses the := operator. */
-mutableVar := "NewMutableVar";
+/* To reassign a mutable variable, use the := operator. */
+mutableVar := "mutated";
 print_endline(mutableVar^);
 
 /* However, you can also mutate variables simply by shadowing them with another let binding. */
-let shadow = "Shadow Me!";
+let shadow = "First I am this!";
 print_endline(shadow);
-let shadow = "But now I'm this!";
+let shadow = "But now I've been shadowed!";
 print_endline(shadow);
 
 /* Imperative Loops */
 /* For loops in Reason iterate from a start up to and including an end value. */
 let starter = 1;
-let ender = 100;
+let ender = 10;
+let store = [||];
 
 for (num in starter to ender) {
     switch (num) {
-    | num when num < 50 => print_endline("You're not yet over the hill.");
-    | num when num >= 50 => print_endline("Yep, you're there.");
-    | _ => print_endline("Don't mind me");
+    | num when num < 5 => Js.log(Array.append(store, [|num|]));
+    | num when num >= 5 => Js.log(Array.append(store, [|num * 2|]));
+    | _ => Js.log(store);
     };
 };
 
 /* You can use downto to iterate from an end value down to a start value. */
 for (num in ender downto starter) {
     switch (num) {
-    | num when num < 50 => print_endline("Full on Benjamin Buttoning now!");
-    | num when num >= 50 => print_endline("Starting to Benjamin Button.");
-    | _ => print_endline("Don't mind me");
+    | num when num < 5 => print_endline("Now we here!");
+    | num when num >= 10 => print_endline("Starting at the top!");
+    | _ => Js.log(store);
     };
 };
+
+/* In general, Array and List methods with likely get you closer to what
+you're looking for than for loops, but they are great to have. */
 
 /* You can also use while loops in the same manner as you do in JS. */
 let count = ref(1);
 while (count < ref(5)) {
-    print_endline("We are looping!");
+    print_endline("We are while looping!");
     count := count^ + 1;
 };
 
-/* Use mutable bindings like above to break out of loops. Reason has no concept of a break keyword like JS. */
+/* Use mutable bindings like above to break out of loops.
+Reason has no concept of a break keyword like JS. */
 
 /* JSX */
 /* Reason natively supports JSX. */
