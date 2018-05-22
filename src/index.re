@@ -76,7 +76,7 @@ let atString =
       | ' ' => '@'
       | _ => c
       },
-    whitespaceString
+    whitespaceString,
   );
 
 print_endline(atString);
@@ -102,7 +102,7 @@ let singlelineString =
       | '\n' => ' '
       | _ => c
       },
-    multilineString
+    multilineString,
   );
 
 print_endline(singlelineString);
@@ -114,12 +114,12 @@ let cssStyle = {j|$style|j};
 
 print_endline(cssStyle);
 
-/* To use unicode characters in a string in Reason, use js| |js */
+/* To use unicode characters in a string in Reason, use js| |js. */
 let unicodeString = {js|••∆∆••|js};
 
 print_endline(unicodeString);
 
-/* To get string lengths and substrings... */
+/* To get string lengths and substrings: */
 let background = "background-color: aquamarine";
 
 let strLength: int = String.length(background);
@@ -199,7 +199,7 @@ let compareBool = tuple : bool => tuple === myTuple;
 
 print_endline(string_of_bool(compareBool(myTuple)));
 
-/* This line will yield "polymorphic comparison introduced (maybe unsafe)". */
+/* This line will yield `polymorphic comparison introduced (maybe unsafe)`. */
 print_endline(string_of_bool(('M', 23) == ('M', 23)));
 
 /* This line produces no warnings. */
@@ -215,7 +215,7 @@ let squareInt = (num: int) : int => num * num;
 print_endline(string_of_int(squareInt(githubStars)));
 
 /* To work with ints, use methods from Reason's Pervasives module.
-   These are already available in the scope. */
+   These are already available in scope. */
 let start: int = 1;
 
 + start; /* unary add */
@@ -255,7 +255,7 @@ print_endline(first);
 
 print_endline(second);
 
-/* Most tuple elements are accessed using destructuring */
+/* Most tuple elements are accessed using destructuring. */
 let (_, _, third: int, _) = myTuple;
 
 print_endline(string_of_int(third));
@@ -278,7 +278,7 @@ rotate(50, 70);
 /* Records are similar to JS objects, but are lighter, immutable by default,
    fixed in field names and types, faster, more rigidly typed. */
 /* Record types are required – the compiler will error if they are not included! */
-/* Prepend a mutable property with the mutable keyword. */
+/* Be sure to prepend a mutable property with the `mutable` keyword. */
 type team = {
   name: string,
   mutable rank: int,
@@ -287,7 +287,7 @@ type team = {
 
 let redSox: team = {name: "Red Sox", rank: 1, average: 0.326};
 
-/* Record keys are accessed via dot notation */
+/* Record keys are accessed via dot notation. */
 print_endline(redSox.name);
 
 print_endline(string_of_float(redSox.average));
@@ -298,7 +298,7 @@ let redSoxUpdate = {...redSox, average: 0.418};
 
 print_endline(string_of_float(redSoxUpdate.average));
 
-/* Existing records can be updated mutably using = */
+/* Existing records can be updated mutably using =. */
 redSox.rank = redSox.rank + 1;
 
 print_endline(string_of_int(redSox.rank));
@@ -337,14 +337,27 @@ let seattle: place = {
    to update your data strucutres, making debugging easier! */
 /* If you are interested in using JS native objects, Reason provides a shorthand syntax. This involves
    wrapping key names with double quotes (""). */
-let jsObject = {
+type jsObject = {
+  .
+  "response": {
+    .
+    "data": {
+      .
+      "starCount": int,
+      "watchers": int,
+    },
+    "code": int,
+  },
+};
+
+let jsObject: jsObject = {
   "response": {
     "data": {
       "starCount": 9,
-      "watchers": 2
+      "watchers": 2,
     },
-    "code": 200
-  }
+    "code": 200,
+  },
 };
 
 /* To access fields, use the ## notation. */
@@ -360,7 +373,7 @@ type tweetQuality =
   | NotBad
   | AF;
 
-/* Variants are typically moved with Reason's switch statement to pattern match */
+/* Variants are typically moved with Reason's switch statement to pattern match. */
 let tweetStatus = status : string =>
   switch (status) {
   | Dope => "That was a dope tweet!"
@@ -374,9 +387,9 @@ print_endline(tweetStatus(AF));
 /* Variants need explicit definitions. Import them by calling the module they reside in. */
 let team: Team.seattleVariant = Mariners;
 
-/* Variant constructors can also take arguments. Check out seattleArgVariant in Team.re, which
+/* Variant constructors can also take arguments. Check out seattleVariant in Team.re, which
    has the following shape:
-   type seattleArgVariant =
+   type seattleVariant =
      | Mariners(player)
      | Sonics(player, year)
      | Seahawks
@@ -604,8 +617,8 @@ let rec factorialEven = (num: int) =>
     | 1 =>
       raise(
         FactorialArgument(
-          "factorialEven only accepts even-numbered arguments."
-        )
+          "factorialEven only accepts even-numbered arguments.",
+        ),
       )
     | _ => 1
     };
@@ -618,8 +631,8 @@ and factorialOdd = (num: int) =>
     | 0 =>
       raise(
         FactorialArgument(
-          "factorialOdd only accepts odd-numbered arguments."
-        )
+          "factorialOdd only accepts odd-numbered arguments.",
+        ),
       )
     | 1 => num * factorialEven(num - 1)
     | _ => 1
@@ -698,7 +711,7 @@ let teams = ("Mariners", "Red Sox", "Astros", "Twins");
 let (ms, bosox, stros, twins) = teams;
 
 print_endline(
-  {j|$ms, $bosox, $stros,  $twins === Parkie-Doo's playoff picks.|j}
+  {j|$ms, $bosox, $stros,  $twins === Parkie-Doo's playoff picks.|j},
 );
 
 /* Here's how to destructure a Reason record. It looks a lot like object destructuring in JS. */
@@ -733,7 +746,7 @@ let exclaim = (~exclamation as {phrase} as exclamation) =>
   /* You have access to both exclamation (the record) and
      the phrase property as a destructured variable. */
   print_endline(
-    {j|And lo, Parkie-Doo shouted, $phrase at $exclamation.volume DB.|j}
+    {j|And lo, Parkie-Doo shouted, $phrase at $exclamation.volume DB.|j},
   );
 
 exclaim(~exclamation={phrase: "Breathtaking, this Reason!", volume: 120.7});
@@ -1068,39 +1081,40 @@ print_endline(ExtendedBoston.basketball);
 /* Promises */
 /* Promises in Reason are handled via BuckleScript using the JS.Promise.* methods. */
 /* Note the . passed as the first argument to resolve. This serves as a flag letting BuckleScript know this is an uncurried function. This was introduced in BuckleScript 2.2.2. If using an older version
-of bs-platform, you can use [@bs] resolve(100) for the same effect. */
+   of bs-platform, you can use [@bs] resolve(100) for the same effect. */
 let promise = Js.Promise.make((~resolve, ~reject as _) => resolve(. 100));
 
 exception Failure(string);
-let failedPromise = Js.Promise.make((~resolve as _, ~reject) => reject(. Failure("Rejected!")));
+
+let failedPromise =
+  Js.Promise.make((~resolve as _, ~reject) =>
+    reject(. Failure("Rejected!"))
+  );
 
 promise
 |> Js.Promise.then_(res => {
-    Js.log(res);
-    Js.Promise.resolve(res);
-})
+     Js.log(res);
+     Js.Promise.resolve(res);
+   })
 |> Js.Promise.then_(res => {
-    Js.log("That's all folks!");
-    Js.Promise.resolve(res - 100);
-})
+     Js.log("That's all folks!");
+     Js.Promise.resolve(res - 100);
+   })
 |> Js.Promise.catch(err => {
-    Js.log2("Failure!!", err);
-    Js.Promise.resolve(-1);
-});
+     Js.log2("Failure!!", err);
+     Js.Promise.resolve(-1);
+   });
 
 failedPromise
 |> Js.Promise.then_(res => {
-    Js.log(res);
-    Js.Promise.resolve(res);
-})
-|> Js.Promise.then_(res => {
-    Js.Promise.resolve(res - 100);
-})
+     Js.log(res);
+     Js.Promise.resolve(res);
+   })
+|> Js.Promise.then_(res => Js.Promise.resolve(res - 100))
 |> Js.Promise.catch(err => {
-    Js.log2("Failure!!", err);
-    Js.Promise.resolve(-1);
-});
-
+     Js.log2("Failure!!", err);
+     Js.Promise.resolve(-1);
+   });
 /* Exception */
 /* Exceptions are a special kind of variant, and not used often in Reason. */
 /* Uncomment the function below to see the compiler throw an exception! */
@@ -1111,4 +1125,3 @@ failedPromise
        /* Here we raise the Not_found constructor of the Exception variant */
        raise(Not_found);
    }; */
-
