@@ -5,6 +5,9 @@
 /* To log out to the console we can use BuckleScript's JS module. */
 Js.log("Hello, BuckleScript and Reason! Luv BuckleScript");
 
+/* To log out multiple arguments, we need to use BuckleScript's `Js.logX` functions. These are specifically designed to type `log` functions with different [arity](http://2ality.com/2017/12/functions-reasonml.html#terminology-arity). */
+Js.log2("This can log", "two arguments.");
+
 /* We can also use Reason's native print_* modules. */
 print_endline("Hello, BuckleScript and Reason! Luv Reason");
 
@@ -46,10 +49,21 @@ let isXY = char : bool =>
   | _ => false
   };
 
-/* To convert characters to strings, use String.make, passing 1 as the first arg. */
+/* To convert characters to strings, you can use String.make, passing 1 as the first arg. */
 let stringFromChar: string = String.make(1, x) ++ String.make(1, y);
 
 print_endline(stringFromChar);
+
+/* If you want to create strings from functions using numerical indexes, use `String.init`. */
+let stringFromInit: string =
+  String.init(3, i =>
+    switch (i) {
+    | i when i < 2 => 'a'
+    | _ => 'b'
+    }
+  );
+
+print_endline(stringFromInit);
 
 /* Strings are concatenated using the ++ operator. */
 let greeting = "Hello";
@@ -62,7 +76,7 @@ let exclamation = "!";
 
 print_endline(greeting ++ space ++ name ++ exclamation);
 
-/* We can operate on strings using String methods from the standard library (Reason's built in methods). */
+/* We can operate on strings using methods from the `String` module of the standard library (Reason's built in methods). */
 let whitespaceString = "   __trim me__   ";
 
 let trimmedString = String.trim(whitespaceString);
